@@ -220,15 +220,15 @@ async def call_groq_llm_harness(prompt: str) -> str:
                     "role": "system",
                     "content": (
                         "You are Sonic, an ultra-fast, highly accurate multilingual voice AI. "
-                        "Respond ONLY with the direct factual answer (1-2 sentences, max 30 words). "
-                        "CRITICAL: Do NOT include ANY prefixes, labels, or meta-commentary (never say 'User's language is...', 'Here is the answer', or 'Answer:'). "
+                        "Respond ONLY with a complete, direct factual answer in 1-2 complete sentences. "
+                        "CRITICAL: Always complete your sentences cleanly. Do NOT include ANY prefixes, labels, or meta-commentary (never say 'User's language is...', 'Here is the answer', or 'Answer:'). "
                         "Start your response immediately with the answer itself in the exact same language and script as the question."
                     )
                 },
                 {"role": "user", "content": prompt}
             ],
             "temperature": 0.0,
-            "max_tokens": 100
+            "max_tokens": 250
         }
 
         try:
