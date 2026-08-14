@@ -1,6 +1,5 @@
 """
-SonicRAG Automated Latency Benchmarking Suite
-HH Goa 2026 Shortlisting Task 2
+Sonic Automated Latency Benchmarking Suite
 
 Measures P50, P70, P90, P100 latency across test queries with detailed stage-by-stage analytics.
 """
@@ -50,7 +49,7 @@ TEST_QUERIES = [
 
 def run_benchmark(num_runs=50):
     print("=" * 70)
-    print("      SONIC RAG: SUB-200MS HARNESS BENCHMARK SUITE")
+    print("      SONIC: SUB-200MS HARNESS BENCHMARK SUITE")
     print("=" * 70)
 
     print(f"--> Connecting to LanceDB at {DB_PATH}...")
@@ -166,11 +165,11 @@ def run_benchmark(num_runs=50):
     print(f"Avg Generation Latency  : {statistics.mean(generation_latencies):.2f} ms")
     print("=" * 70)
 
-    # Save to Markdown Report for Submission
+    # Save to Markdown Report for Project Performance
     report_path = os.path.join(PROJECT_ROOT, "BENCHMARK_REPORT.md")
     with open(report_path, "w", encoding="utf-8") as f:
-        f.write("# SonicRAG Latency Analytics & Benchmark Report\n\n")
-        f.write("### HH Goa 2026 Shortlisting Task 2 Submission\n\n")
+        f.write("# Sonic Latency Analytics & Benchmark Report\n\n")
+        f.write("### Sub-200ms Voice-Enabled Multilingual Performance Benchmark\n\n")
         f.write("## 1. Executive Summary\n")
         f.write(f"- **Target Metric**: Sub-200ms End-to-End Latency\n")
         f.write(f"- **P50 (Median) Latency**: `{p50:.2f} ms`\n")

@@ -1,4 +1,4 @@
-# Sonic: Voice-Enabled Multilingual RAG Engine
+# Sonic: Sub-200ms Multilingual Voice AI Engine
 
 **Developed by Team WeHustlers**
 

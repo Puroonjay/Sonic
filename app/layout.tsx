@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SonicRAG | Sub-200ms Voice RAG Engine",
-  description: "HH Goa 2026 Shortlisting Task 2: Sub-200ms Voice-Enabled RAG with Multi-Strategy Chunking & Guardrails",
+  title: "Sonic | Sub-200ms Multilingual Voice AI",
+  description: "Sonic is an ultra-fast, voice-enabled multilingual AI assistant with sub-200ms retrieval and generation across 10+ Indic languages.",
 };
 
 export default function RootLayout({

@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { SonicLogo } from './SonicLogo';
 import {
   Plus,
   MessageSquare,
@@ -63,12 +64,10 @@ export function Sidebar({
           <div className="flex items-center justify-between">
             {isOpen ? (
               <div className="flex items-center gap-2.5 px-1.5">
-                <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-zinc-950 shadow-md shadow-emerald-500/20 font-black text-sm">
-                  ⚡
-                </div>
+                <SonicLogo size={34} glow={true} />
                 <div>
                   <h1 className="font-extrabold text-sm tracking-tight text-zinc-100 flex items-center gap-1.5">
-                    <span>SonicRAG</span>
+                    <span>Sonic</span>
                     <span className="text-[9px] font-mono px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                       v2.0
                     </span>
@@ -77,8 +76,8 @@ export function Sidebar({
                 </div>
               </div>
             ) : (
-              <div className="mx-auto w-8 h-8 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-zinc-950 font-black text-sm shadow-md shadow-emerald-500/20">
-                ⚡
+              <div className="mx-auto flex items-center justify-center">
+                <SonicLogo size={32} glow={false} />
               </div>
             )}
 
@@ -190,10 +189,10 @@ export function Sidebar({
                   </div>
                   <div>
                     <div className="text-zinc-200 font-bold text-[11px]">WeHustlers</div>
-                    <div className="text-zinc-500 text-[9px]">HH Goa Shortlisting</div>
+                    
                   </div>
                 </div>
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                
               </div>
             </>
           ) : (

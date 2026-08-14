@@ -103,8 +103,8 @@ class BenchmarkResult(BaseModel):
 # =====================================================================
 
 app = FastAPI(
-    title="SonicRAG Sub-200ms Multilingual Engine",
-    description="HH Goa 2026 Shortlisting Task 2: Sub-200ms Voice RAG with Multi-Strategy Chunking & Multi-Tier Guardrails",
+    title="Sonic Sub-200ms Multilingual Voice AI Engine",
+    description="Sub-200ms Voice-Enabled Multilingual AI with Multi-Strategy Chunking & Multi-Tier Guardrails",
     version="2.0.0"
 )
 
@@ -557,7 +557,7 @@ async def run_benchmark_endpoint(sample_count: int = 25):
 async def health_check():
     return {
         "status": "healthy",
-        "engine": "SonicRAG Sub-200ms",
+        "engine": "Sonic Sub-200ms",
         "dataset": "MSMARCO-XI",
         "table_connected": table is not None,
         "table_records": len(table) if table is not None else 0,

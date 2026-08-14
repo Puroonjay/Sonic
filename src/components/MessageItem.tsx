@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { RAGResponse, RetrievedCitation } from '@/src/hooks/useVoiceRAG';
+import { SonicLogo } from './SonicLogo';
 import { sounds } from '@/src/lib/soundEffects';
 import { ttsEngine } from '@/src/lib/ttsEngine';
 import {
@@ -137,9 +138,7 @@ export function MessageItem({
       {/* 2. Assistant Response Card (Perplexity & Gemini Style) */}
       <div className="flex items-start gap-3 max-w-3xl mr-auto">
         {/* Avatar */}
-        <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-zinc-950 shrink-0 shadow-md shadow-emerald-500/20 font-black text-xs">
-          ⚡
-        </div>
+        <SonicLogo size={32} glow={true} className="shrink-0 mt-0.5" />
 
         {/* Message Container */}
         <div className="flex-1 space-y-3 min-w-0">

@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { SonicLogo } from './SonicLogo';
 import {
   Menu,
   Sparkles,
@@ -47,8 +48,8 @@ export function ChatHeader({
         </button>
 
         {/* Model Selector Pill (ChatGPT/Perplexity Style) */}
-        <div className="flex items-center gap-2 bg-zinc-900/90 border border-zinc-800 rounded-xl px-3 py-1.5 shadow-xs">
-          <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+        <div className="flex items-center gap-2 bg-zinc-900/90 border border-zinc-800 rounded-xl px-2.5 py-1 shadow-xs">
+          <SonicLogo size={18} glow={false} />
           <span className="font-bold text-zinc-200 text-xs">Sonic LLaMA-3.1</span>
           <span className="text-[10px] text-emerald-400 font-mono hidden sm:inline">
             (Sub-200ms)

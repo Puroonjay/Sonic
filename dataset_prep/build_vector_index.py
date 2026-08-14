@@ -199,7 +199,7 @@ def process_dataset_multi_strategy(df: pd.DataFrame):
     return texts_to_embed, records_metadata
 
 def main():
-    parser = argparse.ArgumentParser(description="Sonic RAG Vector Store Index Builder with Multi-Strategy Chunking")
+    parser = argparse.ArgumentParser(description="Sonic Vector Store Index Builder with Multi-Strategy Chunking")
     parser.add_argument("--rows", type=int, default=500, help="Number of query rows from dataset to index (default: 500 for fast ~1min build)")
     parser.add_argument("--all", action="store_true", help="Index the entire dataset")
     args = parser.parse_args()

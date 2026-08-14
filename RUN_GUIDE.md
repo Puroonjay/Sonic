@@ -1,4 +1,4 @@
-# SonicRAG Run Guide
+# Sonic Run Guide
 
 Simple step-by-step instructions to run the project.
 
@@ -70,9 +70,9 @@ http://localhost:3000
 
 ---
 
-## Step 7: Get Latency Numbers for Submission (P50 / P70 / P100)
+## Step 7: Get Latency Numbers (P50 / P70 / P100)
 
-To generate the latency benchmark report for your hackathon submission, run:
+To generate the latency benchmark report for project performance, run:
 
 ```powershell
 python backend/benchmark.py
