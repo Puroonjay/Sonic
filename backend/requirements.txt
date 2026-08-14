@@ -12,3 +12,5 @@ python-dotenv>=1.0.1
 numpy
 pandas
 tqdm
+python-multipart>=0.0.9
+gTTS>=2.5.0

@@ -3,13 +3,16 @@ import time
 import json
 import asyncio
 from typing import List, Optional, Dict, Any
+import io
 from functools import wraps
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException, File, UploadFile, Form
+from fastapi.responses import Response
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 import lancedb
 from sentence_transformers import SentenceTransformer
 import httpx
+from gtts import gTTS
 
 # Load environment variables from .env
 def load_env_file():
@@ -74,6 +77,10 @@ class QueryRequest(BaseModel):
     text: str
     language_code: Optional[str] = "hi-IN"
     bypass_stt: bool = True
+
+class TTSRequest(BaseModel):
+    text: str
+    language_code: Optional[str] = "hi-IN"
 
 class BenchmarkResult(BaseModel):
     total_queries: int
@@ -342,6 +349,73 @@ async def query_endpoint(req: QueryRequest):
         raise HTTPException(status_code=400, detail="Query text cannot be empty.")
     return await execute_rag_pipeline(req.text, stt_ms=0.0)
 
+@app.post("/api/voice", response_model=StructuredRAGResponse)
+async def voice_endpoint(file: UploadFile = File(...), language_code: str = Form("hi-IN")):
+    """Direct voice audio upload endpoint with Sarvam STT & sub-200ms RAG."""
+    audio_bytes = await file.read()
+    if not audio_bytes:
+        raise HTTPException(status_code=400, detail="Empty audio file.")
+
+    stt_start = time.perf_counter()
+    try:
+        transcript = await call_sarvam_stt_harness(audio_bytes, language_code=language_code)
+    except Exception as e:
+        print(f"STT Exception: {e}")
+        transcript = ""
+    stt_ms = round((time.perf_counter() - stt_start) * 1000, 2)
+
+    if not transcript.strip():
+        return StructuredRAGResponse(
+            transcript="",
+            answer="Could not detect any speech in the audio. Please try speaking clearly.",
+            grounded=False,
+            refused=False,
+            confidence_score=0.0,
+            citations=[],
+            metrics=LatencyMetrics(stt_ms=stt_ms, retrieval_ms=0.0, guardrail_ms=0.0, generation_ms=0.0, total_ms=stt_ms)
+        )
+
+    return await execute_rag_pipeline(transcript, stt_ms=stt_ms)
+
+@app.post("/api/tts")
+async def tts_endpoint(req: TTSRequest):
+    """Ultra-reliable Indic Text-to-Speech audio streaming endpoint."""
+    if not req.text.strip():
+        raise HTTPException(status_code=400, detail="Empty text for TTS.")
+
+    # Map Indic language codes to standard codes
+    lang_map = {
+        "hi-IN": "hi", "hi": "hi",
+        "en-IN": "en", "en-US": "en", "en": "en",
+        "ta-IN": "ta", "ta": "ta",
+        "te-IN": "te", "te": "te",
+        "bn-IN": "bn", "bn": "bn",
+        "mr-IN": "mr", "mr": "mr",
+        "gu-IN": "gu", "gu": "gu",
+        "kn-IN": "kn", "kn": "kn",
+        "ml-IN": "ml", "ml": "ml",
+        "pa-IN": "pa", "pa": "pa",
+        "od-IN": "hi",
+    }
+
+    target_lang = lang_map.get(req.language_code, "hi")
+
+    try:
+        tts = gTTS(text=req.text, lang=target_lang, slow=False)
+        fp = io.BytesIO()
+        tts.write_to_fp(fp)
+        fp.seek(0)
+        return Response(content=fp.read(), media_type="audio/mpeg")
+    except Exception as e:
+        try:
+            tts = gTTS(text=req.text, lang="hi", slow=False)
+            fp = io.BytesIO()
+            tts.write_to_fp(fp)
+            fp.seek(0)
+            return Response(content=fp.read(), media_type="audio/mpeg")
+        except Exception as e2:
+            raise HTTPException(status_code=500, detail=f"TTS synthesis error: {str(e2)}")
+
 @app.websocket("/ws/rag")
 async def websocket_rag_endpoint(websocket: WebSocket, language_code: str = "hi-IN"):
     """Real-time sub-200ms voice streaming WebSocket endpoint supporting 10+ Indic languages."""
@@ -365,14 +439,39 @@ async def websocket_rag_endpoint(websocket: WebSocket, language_code: str = "hi-
             stt_ms = round((time.perf_counter() - stt_start) * 1000, 2)
 
             if not transcript.strip():
+                empty_res = StructuredRAGResponse(
+                    transcript="",
+                    answer="No clear speech detected. Please speak into your microphone and try again.",
+                    grounded=False,
+                    refused=False,
+                    confidence_score=0.0,
+                    citations=[],
+                    metrics=LatencyMetrics(stt_ms=stt_ms, retrieval_ms=0.0, guardrail_ms=0.0, generation_ms=0.0, total_ms=stt_ms)
+                )
+                await websocket.send_text(empty_res.model_dump_json())
                 continue
 
             # 2. Execute RAG Pipeline
-            response = await execute_rag_pipeline(transcript, stt_ms=stt_ms)
-            await websocket.send_text(response.model_dump_json())
+            try:
+                response = await execute_rag_pipeline(transcript, stt_ms=stt_ms)
+                await websocket.send_text(response.model_dump_json())
+            except Exception as e:
+                print(f"RAG Execution Exception: {e}")
+                err_res = StructuredRAGResponse(
+                    transcript=transcript,
+                    answer=f"Error executing RAG pipeline: {str(e)}",
+                    grounded=False,
+                    refused=False,
+                    confidence_score=0.0,
+                    citations=[],
+                    metrics=LatencyMetrics(stt_ms=stt_ms, retrieval_ms=0.0, guardrail_ms=0.0, generation_ms=0.0, total_ms=stt_ms)
+                )
+                await websocket.send_text(err_res.model_dump_json())
 
     except WebSocketDisconnect:
         print("--> WebSocket Client Disconnected")
+    except Exception as e:
+        print(f"--> WebSocket Error: {e}")
 
 @app.post("/api/benchmark", response_model=BenchmarkResult)
 async def run_benchmark_endpoint(sample_count: int = 25):
