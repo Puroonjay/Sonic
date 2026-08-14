@@ -31,8 +31,8 @@ export interface RAGResponse {
 }
 
 export function useVoiceRAG(
-  backendWsUrl: string,
-  httpBackendUrl: string = 'http://localhost:8000',
+  backendWsUrl?: string,
+  httpBackendUrl: string = '',
   languageCode: string = 'hi-IN'
 ) {
   const [isRecording, setIsRecording] = useState(false);
@@ -64,7 +64,8 @@ export function useVoiceRAG(
         formData.append('file', blob, 'recording.webm');
         formData.append('language_code', languageCode);
 
-        const res = await fetch(`${httpBackendUrl}/api/voice`, {
+        const baseUrl = httpBackendUrl ? httpBackendUrl.replace(/\/$/, '') : '';
+        const res = await fetch(`${baseUrl}/api/voice`, {
           method: 'POST',
           body: formData,
           signal: controller.signal,
@@ -244,7 +245,8 @@ export function useVoiceRAG(
       }, 9000);
 
       try {
-        const res = await fetch(`${httpBackendUrl}/api/query`, {
+        const baseUrl = httpBackendUrl ? httpBackendUrl.replace(/\/$/, '') : '';
+        const res = await fetch(`${baseUrl}/api/query`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

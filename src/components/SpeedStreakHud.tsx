@@ -41,7 +41,7 @@ interface BenchmarkReport {
 export function SpeedStreakHud({
   currentMetrics,
   history,
-  httpBackendUrl = 'http://localhost:8000',
+  httpBackendUrl = '',
 }: SpeedStreakHudProps) {
   const [isRunningBenchmark, setIsRunningBenchmark] = useState(false);
   const [benchmarkResult, setBenchmarkResult] = useState<BenchmarkReport | null>(null);
@@ -66,7 +66,8 @@ export function SpeedStreakHud({
     sounds.playBlip();
     setIsRunningBenchmark(true);
     try {
-      const res = await fetch(`${httpBackendUrl}/api/benchmark?sample_count=25`, {
+      const baseUrl = httpBackendUrl ? httpBackendUrl.replace(/\/$/, '') : '';
+      const res = await fetch(`${baseUrl}/api/benchmark?sample_count=25`, {
         method: 'POST',
       });
       const data = await res.json();

@@ -9,7 +9,7 @@ class UniversalIndicTTSEngine {
   private currentAudio: HTMLAudioElement | null = null;
   private synth: SpeechSynthesis | null = null;
   private voices: SpeechSynthesisVoice[] = [];
-  private backendUrl: string = 'http://localhost:8000';
+  private backendUrl: string = '';
   private lastSpokenText: string = '';
   private lastSpokenTimestamp: number = 0;
 
@@ -72,7 +72,8 @@ class UniversalIndicTTSEngine {
 
     // Strategy A: Server-side Indic TTS via /api/tts (Crystal clear Hindi, Tamil, Telugu, Marathi, etc.)
     try {
-      const res = await fetch(`${this.backendUrl}/api/tts`, {
+      const baseUrl = this.backendUrl ? this.backendUrl.replace(/\/$/, '') : '';
+      const res = await fetch(`${baseUrl}/api/tts`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

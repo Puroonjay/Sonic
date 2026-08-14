@@ -38,10 +38,17 @@ const SUPPORTED_LANGUAGES = [
 ];
 
 export default function SonicProfessionalStudio() {
-  const WS_BACKEND_URL =
-    process.env.NEXT_PUBLIC_WS_BACKEND_URL || 'ws://localhost:8000/ws/rag';
-  const HTTP_BACKEND_URL =
-    process.env.NEXT_PUBLIC_HTTP_BACKEND_URL || 'http://localhost:8000';
+  const [wsUrl, setWsUrl] = useState<string>(
+    process.env.NEXT_PUBLIC_WS_BACKEND_URL || 'ws://localhost:8000/ws/rag'
+  );
+  const HTTP_BACKEND_URL = process.env.NEXT_PUBLIC_HTTP_BACKEND_URL || '';
+
+  useEffect(() => {
+    if (!process.env.NEXT_PUBLIC_WS_BACKEND_URL && typeof window !== 'undefined') {
+      const proto = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      setWsUrl(`${proto}//${window.location.host}/ws/rag`);
+    }
+  }, []);
 
   const [selectedLanguage, setSelectedLanguage] = useState('hi-IN');
   const [mounted, setMounted] = useState(false);
@@ -65,7 +72,7 @@ export default function SonicProfessionalStudio() {
     stopRecording,
     toggleRecording,
     sendTextQuery,
-  } = useVoiceRAG(WS_BACKEND_URL, HTTP_BACKEND_URL, selectedLanguage);
+  } = useVoiceRAG(wsUrl, HTTP_BACKEND_URL, selectedLanguage);
 
   useEffect(() => {
     setMounted(true);
