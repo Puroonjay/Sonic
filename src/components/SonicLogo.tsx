@@ -86,9 +86,6 @@ export function SonicLogo({ size = 28, className = '', glow = true }: SonicLogoP
             strokeDasharray="1 3"
           />
         </g>
-
-        {/* Ultra-speed micro-sparkle point */}
-        <circle cx="27" cy="9" r="1.2" fill="#67E8F9" className="animate-ping" style={{ animationDuration: '3s' }} />
       </svg>
     </div>
   );

@@ -1,0 +1,34 @@
+<svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="sonic_grad_primary" x1="2" y1="2" x2="34" y2="34" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#10B981" />
+      <stop offset="50%" stop-color="#14B8A6" />
+      <stop offset="100%" stop-color="#06B6D4" />
+    </linearGradient>
+    <linearGradient id="sonic_grad_wave" x1="6" y1="18" x2="30" y2="18" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#A7F3D0" />
+      <stop offset="50%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#67E8F9" />
+    </linearGradient>
+    <linearGradient id="sonic_bg_grad" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#064E3B" />
+      <stop offset="50%" stop-color="#022C22" />
+      <stop offset="100%" stop-color="#082F49" />
+    </linearGradient>
+  </defs>
+
+  <!-- Squircle Background -->
+  <rect x="1" y="1" width="34" height="34" rx="9" fill="url(#sonic_bg_grad)" stroke="url(#sonic_grad_primary)" stroke-width="1.5" />
+
+  <!-- Supersonic Waveform S Monogram -->
+  <path d="M26 11.5C26 8.46 22.42 6.5 18 6.5C13.58 6.5 10 8.46 10 11.5C10 15 15.5 16 18 16.8C21.5 18 26 19.5 26 24.5C26 27.54 22.42 29.5 18 29.5C13.58 29.5 10 27.54 10 24.5" stroke="url(#sonic_grad_primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.4" />
+
+  <!-- Equalizer soundwave bars -->
+  <rect x="8.5" y="14" width="2" height="8" rx="1" fill="url(#sonic_grad_wave)" />
+  <rect x="13" y="10" width="2.2" height="16" rx="1.1" fill="url(#sonic_grad_wave)" />
+  <rect x="17.5" y="7" width="2.4" height="22" rx="1.2" fill="#FFFFFF" />
+  <rect x="22.2" y="11" width="2.2" height="14" rx="1.1" fill="url(#sonic_grad_wave)" />
+  <rect x="26.7" y="15" width="2" height="6" rx="1" fill="url(#sonic_grad_wave)" />
+
+  <path d="M9 18H28" stroke="url(#sonic_grad_primary)" stroke-width="1.2" stroke-linecap="round" stroke-dasharray="1 3" />
+</svg>

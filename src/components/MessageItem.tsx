@@ -142,39 +142,6 @@ export function MessageItem({
 
         {/* Message Container */}
         <div className="flex-1 space-y-3 min-w-0">
-          {/* Perplexity Sources Bar (Citations) */}
-          {response.citations && response.citations.length > 0 && !response.refused && (
-            <div className="space-y-1.5">
-              <div className="flex items-center gap-1.5 text-[11px] font-mono text-zinc-400">
-                <Layers className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Retrieved MSMARCO-XI Sources:</span>
-              </div>
-
-              {/* Source Chips Carousel */}
-              <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
-                {response.citations.map((cit, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => {
-                      sounds.playBlip();
-                      onOpenSourceModal(cit, idx);
-                    }}
-                    className="shrink-0 bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-800 hover:border-emerald-500/50 rounded-xl p-2 text-left transition-all max-w-[210px] group shadow-xs cursor-pointer"
-                  >
-                    <div className="flex items-center justify-between text-[10px] font-mono mb-1 text-zinc-500 group-hover:text-emerald-400">
-                      <span className="font-bold">Doc #{idx + 1}</span>
-                      <span className="text-zinc-600">Dist: {cit.distance}</span>
-                    </div>
-                    <p className="text-[11px] font-sans text-zinc-300 line-clamp-2 leading-snug">
-                      {cit.chunk_text}
-                    </p>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
           {/* Reasoning & Latency Capsule */}
           <div className="flex flex-wrap items-center gap-2 text-[11px] font-mono">
             <span className="inline-flex items-center gap-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/25 px-2.5 py-0.5 rounded-full font-bold">
@@ -279,17 +246,6 @@ export function MessageItem({
               >
                 <RotateCcw className="w-3.5 h-3.5" />
               </button>
-            </div>
-
-            {/* Guardrail Indicators */}
-            <div className="flex items-center gap-1.5 text-[10px] font-mono text-zinc-500">
-              <span className="inline-flex items-center gap-1 text-emerald-400">
-                <ShieldCheck className="w-3 h-3" /> Safety PASS
-              </span>
-              <span>•</span>
-              <span className="inline-flex items-center gap-1 text-emerald-400">
-                <ShieldCheck className="w-3 h-3" /> Grounded PASS
-              </span>
             </div>
           </div>
         </div>

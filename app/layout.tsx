@@ -15,6 +15,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Sonic | Sub-200ms Multilingual Voice AI",
   description: "Sonic is an ultra-fast, voice-enabled multilingual AI assistant with sub-200ms retrieval and generation across 10+ Indic languages.",
+  icons: {
+    icon: "/icon.svg",
+    shortcut: "/icon.svg",
+    apple: "/icon.svg",
+  },
 };
 
 export default function RootLayout({

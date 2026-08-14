@@ -5,6 +5,7 @@ import asyncio
 from typing import List, Optional, Dict, Any
 import io
 from functools import wraps
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException, File, UploadFile, Form
 from fastapi.responses import Response
 from fastapi.middleware.cors import CORSMiddleware
@@ -102,20 +103,6 @@ class BenchmarkResult(BaseModel):
 # APP & RESOURCE INITIALIZATION
 # =====================================================================
 
-app = FastAPI(
-    title="Sonic Sub-200ms Multilingual Voice AI Engine",
-    description="Sub-200ms Voice-Enabled Multilingual AI with Multi-Strategy Chunking & Multi-Tier Guardrails",
-    version="2.0.0"
-)
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DB_PATH = os.path.join(PROJECT_ROOT, "lancedb_msmarco")
 
@@ -129,8 +116,8 @@ table = None
 embed_model = None
 http_client: Optional[httpx.AsyncClient] = None
 
-@app.on_event("startup")
-async def startup_event():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     global db, table, embed_model, http_client, SARVAM_API_KEY, GROQ_API_KEY
     load_env_file()
     SARVAM_API_KEY = os.getenv("SARVAM_API_KEY", "YOUR_SARVAM_KEY")
@@ -161,11 +148,25 @@ async def startup_event():
     _ = embed_model.encode(["warmup query"])
     print("--> Sonic Engine Ready!")
 
-@app.on_event("shutdown")
-async def shutdown_event():
-    global http_client
+    yield
+
     if http_client:
         await http_client.aclose()
+
+app = FastAPI(
+    title="Sonic Sub-200ms Multilingual Voice AI Engine",
+    description="Sub-200ms Voice-Enabled Multilingual AI with Multi-Strategy Chunking & Multi-Tier Guardrails",
+    version="2.0.0",
+    lifespan=lifespan
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # =====================================================================
 # MODEL HARNESS: GUARDRAILS & RETRY ORCHESTRATION
@@ -263,8 +264,8 @@ async def execute_rag_pipeline(transcript: str, stt_ms: float = 0.0) -> Structur
     # 1. Tier 1 Guardrail: Safety & Toxicity Filter
     guardrail_start = time.perf_counter()
     safety_violation = evaluate_tier1_safety_guardrail(transcript)
+    guardrail_ms = round((time.perf_counter() - guardrail_start) * 1000, 2)
     if safety_violation:
-        guardrail_ms = round((time.perf_counter() - guardrail_start) * 1000, 2)
         total_ms = round((time.perf_counter() - start_total + (stt_ms / 1000)) * 1000, 2)
         return StructuredRAGResponse(
             transcript=transcript,
@@ -279,7 +280,8 @@ async def execute_rag_pipeline(transcript: str, stt_ms: float = 0.0) -> Structur
 
     # 2. Vector Retrieval (LanceDB)
     retrieval_start = time.perf_counter()
-    query_vector = embed_model.encode(transcript, normalize_embeddings=True).tolist()
+    query_vector_raw = await asyncio.to_thread(embed_model.encode, transcript, normalize_embeddings=True)
+    query_vector = query_vector_raw.tolist()
     
     citations = []
     top_distance = 1.0
@@ -304,7 +306,6 @@ async def execute_rag_pipeline(transcript: str, stt_ms: float = 0.0) -> Structur
             print(f"Retrieval error: {e}")
 
     retrieval_ms = round((time.perf_counter() - retrieval_start) * 1000, 2)
-    guardrail_ms = round((time.perf_counter() - guardrail_start) * 1000, 2)
 
     # 3. Intelligent Grounded Generation
     gen_start = time.perf_counter()
@@ -400,19 +401,20 @@ async def tts_endpoint(req: TTSRequest):
 
     target_lang = lang_map.get(req.language_code, "hi")
 
-    try:
-        tts = gTTS(text=req.text, lang=target_lang, slow=False)
+    def _generate_audio(text: str, lang: str) -> bytes:
+        tts = gTTS(text=text, lang=lang, slow=False)
         fp = io.BytesIO()
         tts.write_to_fp(fp)
         fp.seek(0)
-        return Response(content=fp.read(), media_type="audio/mpeg")
+        return fp.read()
+
+    try:
+        audio_content = await asyncio.to_thread(_generate_audio, req.text, target_lang)
+        return Response(content=audio_content, media_type="audio/mpeg")
     except Exception as e:
         try:
-            tts = gTTS(text=req.text, lang="hi", slow=False)
-            fp = io.BytesIO()
-            tts.write_to_fp(fp)
-            fp.seek(0)
-            return Response(content=fp.read(), media_type="audio/mpeg")
+            audio_content = await asyncio.to_thread(_generate_audio, req.text, "hi")
+            return Response(content=audio_content, media_type="audio/mpeg")
         except Exception as e2:
             raise HTTPException(status_code=500, detail=f"TTS synthesis error: {str(e2)}")
 
