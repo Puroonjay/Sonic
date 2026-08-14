@@ -55,14 +55,14 @@ export function Sidebar({
 
       <aside
         className={`fixed lg:static top-0 bottom-0 left-0 z-40 bg-zinc-950/95 lg:bg-zinc-950/70 border-r border-zinc-850 flex flex-col justify-between transition-all duration-300 backdrop-blur-xl ${
-          isOpen ? 'w-72' : 'w-0 lg:w-16'
+          isOpen ? 'w-72' : 'w-0 lg:w-20'
         } overflow-hidden`}
       >
         {/* Top Header & New Chat */}
         <div className="p-3.5 space-y-4">
           {/* Brand Logo & Toggle */}
-          <div className="flex items-center justify-between">
-            {isOpen ? (
+          {isOpen ? (
+            <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5 px-1.5">
                 <SonicLogo size={34} glow={true} />
                 <div>
@@ -75,21 +75,29 @@ export function Sidebar({
                   <p className="text-[10px] text-zinc-500 font-mono">Sub-200ms Indic Voice AI</p>
                 </div>
               </div>
-            ) : (
-              <div className="mx-auto flex items-center justify-center">
-                <SonicLogo size={32} glow={false} />
-              </div>
-            )}
 
-            <button
-              type="button"
-              onClick={onToggle}
-              className="p-1.5 rounded-lg text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900 transition-colors hidden lg:flex"
-              title={isOpen ? 'Collapse Sidebar' : 'Expand Sidebar'}
-            >
-              {isOpen ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-            </button>
-          </div>
+              <button
+                type="button"
+                onClick={onToggle}
+                className="p-1.5 rounded-lg text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900 transition-colors hidden lg:flex cursor-pointer"
+                title="Collapse Sidebar"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center gap-2.5">
+              <SonicLogo size={32} glow={false} />
+              <button
+                type="button"
+                onClick={onToggle}
+                className="w-8 h-8 rounded-xl text-zinc-400 hover:text-emerald-400 bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-800 hover:border-emerald-500/40 transition-all hidden lg:flex items-center justify-center cursor-pointer shadow-xs"
+                title="Expand Sidebar"
+              >
+                <ChevronRight className="w-4 h-4 text-zinc-300 hover:text-emerald-400" />
+              </button>
+            </div>
+          )}
 
           {/* New Chat Button (ChatGPT / Perplexity Style) */}
           <button

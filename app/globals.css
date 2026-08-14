@@ -19,6 +19,24 @@ body {
   overflow-x: hidden;
 }
 
+/* Universal Pointer Cursor for All Buttons & Interactive Controls */
+button,
+[role="button"],
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+a,
+select,
+summary {
+  cursor: pointer !important;
+}
+
+button:disabled,
+[role="button"][aria-disabled="true"],
+input:disabled {
+  cursor: not-allowed !important;
+}
+
 /* Custom Animation Keyframes */
 @keyframes float {
   0%, 100% {

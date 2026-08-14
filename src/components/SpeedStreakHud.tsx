@@ -81,15 +81,18 @@ export function SpeedStreakHud({
     }
   };
 
-  const totalMs = currentMetrics ? currentMetrics.total_ms || 1 : 1;
-  const sttPct = currentMetrics ? Math.round((currentMetrics.stt_ms / totalMs) * 100) : 0;
-  const retrievalPct = currentMetrics ? Math.round((currentMetrics.retrieval_ms / totalMs) * 100) : 0;
-  const guardrailPct = currentMetrics ? Math.round((currentMetrics.guardrail_ms / totalMs) * 100) : 0;
-  const genPct = currentMetrics ? Math.max(5, 100 - sttPct - retrievalPct - guardrailPct) : 0;
+  // Use currentMetrics, or most recent from history
+  const metricsToDisplay = currentMetrics || (history.length > 0 ? history[0].metrics : null);
+
+  const totalMs = metricsToDisplay ? metricsToDisplay.total_ms || 1 : 1;
+  const sttPct = metricsToDisplay ? Math.round((metricsToDisplay.stt_ms / totalMs) * 100) : 0;
+  const retrievalPct = metricsToDisplay ? Math.round((metricsToDisplay.retrieval_ms / totalMs) * 100) : 0;
+  const guardrailPct = metricsToDisplay ? Math.round((metricsToDisplay.guardrail_ms / totalMs) * 100) : 0;
+  const genPct = metricsToDisplay ? Math.max(0, 100 - sttPct - retrievalPct - guardrailPct) : 0;
 
   return (
     <div className="w-full glass-panel border border-zinc-800 rounded-3xl p-5 md:p-6 font-mono text-xs text-zinc-300 space-y-5 shadow-2xl backdrop-blur-2xl">
-      {/* Top Header with Streak Flame */}
+      {/* Top Header */}
       <div className="flex justify-between items-center border-b border-zinc-800/80 pb-3.5">
         <div className="flex items-center gap-2.5">
           <div className="p-2 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 shadow-sm shadow-emerald-500/20">
@@ -101,12 +104,6 @@ export function SpeedStreakHud({
             </h3>
             <p className="text-[10px] text-zinc-500">Real-Time Performance Harvester</p>
           </div>
-        </div>
-
-        {/* Gamified Streak Badge */}
-        <div className="flex items-center gap-1.5 bg-gradient-to-r from-amber-500/15 to-emerald-500/15 border border-amber-500/30 text-amber-300 px-3 py-1 rounded-full text-[11px] font-bold shadow-md">
-          <Flame className="w-3.5 h-3.5 text-amber-400 fill-amber-400 animate-pulse" />
-          <span>{sub200Streak > 0 ? `${sub200Streak}x FAST STREAK` : 'SUB-200MS READY'}</span>
         </div>
       </div>
 
@@ -211,14 +208,14 @@ export function SpeedStreakHud({
       )}
 
       {/* Stage Breakdown Visualizer */}
-      {currentMetrics && (
+      {metricsToDisplay && (
         <div className="space-y-3 pt-2 border-t border-zinc-800/80">
           <div className="flex items-center justify-between text-[11px]">
             <span className="text-zinc-300 font-bold uppercase tracking-wider">
               Stage-by-Stage Breakdown
             </span>
             <span className="text-[10px] text-zinc-400 font-mono">
-              Total: <strong className="text-emerald-400">{currentMetrics.total_ms} ms</strong>
+              Total: <strong className="text-emerald-400">{metricsToDisplay.total_ms} ms</strong>
             </span>
           </div>
 
@@ -228,35 +225,35 @@ export function SpeedStreakHud({
               <div
                 className="bg-indigo-500 h-full rounded-l-full transition-all duration-300"
                 style={{ width: `${sttPct}%` }}
-                title={`STT: ${currentMetrics.stt_ms}ms`}
+                title={`STT: ${metricsToDisplay.stt_ms}ms`}
               />
             )}
             <div
               className="bg-emerald-500 h-full transition-all duration-300"
               style={{ width: `${retrievalPct}%` }}
-              title={`LanceDB: ${currentMetrics.retrieval_ms}ms`}
+              title={`LanceDB: ${metricsToDisplay.retrieval_ms}ms`}
             />
             <div
               className="bg-cyan-400 h-full transition-all duration-300"
               style={{ width: `${guardrailPct}%` }}
-              title={`Guardrails: ${currentMetrics.guardrail_ms}ms`}
+              title={`Guardrails: ${metricsToDisplay.guardrail_ms}ms`}
             />
             <div
               className="bg-amber-400 h-full rounded-r-full transition-all duration-300"
               style={{ width: `${genPct}%` }}
-              title={`Groq: ${currentMetrics.generation_ms}ms`}
+              title={`Groq: ${metricsToDisplay.generation_ms}ms`}
             />
           </div>
 
           {/* Detailed Stage Metrics */}
           <div className="space-y-1.5 font-mono text-xs">
-            {currentMetrics.stt_ms > 0 && (
+            {metricsToDisplay.stt_ms > 0 && (
               <div className="flex justify-between items-center bg-zinc-950/80 px-3 py-2 rounded-xl border border-zinc-850">
                 <span className="text-zinc-400 flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-indigo-500" />
                   1. Speech-to-Text (Sarvam):
                 </span>
-                <span className="font-bold text-indigo-300">{currentMetrics.stt_ms} ms</span>
+                <span className="font-bold text-indigo-300">{metricsToDisplay.stt_ms} ms</span>
               </div>
             )}
 
@@ -265,7 +262,7 @@ export function SpeedStreakHud({
                 <span className="w-2 h-2 rounded-full bg-emerald-500" />
                 2. Vector Retrieval (LanceDB):
               </span>
-              <span className="font-bold text-emerald-400">{currentMetrics.retrieval_ms} ms</span>
+              <span className="font-bold text-emerald-400">{metricsToDisplay.retrieval_ms} ms</span>
             </div>
 
             <div className="flex justify-between items-center bg-zinc-950/80 px-3 py-2 rounded-xl border border-zinc-850">
@@ -273,7 +270,7 @@ export function SpeedStreakHud({
                 <span className="w-2 h-2 rounded-full bg-cyan-400" />
                 3. Multi-Tier Guardrails:
               </span>
-              <span className="font-bold text-cyan-300">{currentMetrics.guardrail_ms} ms</span>
+              <span className="font-bold text-cyan-300">{metricsToDisplay.guardrail_ms} ms</span>
             </div>
 
             <div className="flex justify-between items-center bg-zinc-950/80 px-3 py-2 rounded-xl border border-zinc-850">
@@ -281,7 +278,7 @@ export function SpeedStreakHud({
                 <span className="w-2 h-2 rounded-full bg-amber-400" />
                 4. LLM Generation (Groq LLaMA-3):
               </span>
-              <span className="font-bold text-amber-300">{currentMetrics.generation_ms} ms</span>
+              <span className="font-bold text-amber-300">{metricsToDisplay.generation_ms} ms</span>
             </div>
           </div>
         </div>

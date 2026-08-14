@@ -17,9 +17,12 @@ except Exception:
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(SCRIPT_DIR)
 
-parquet_filename = os.path.join(PROJECT_ROOT, "hinval.parquet")
-db_path = os.path.join(PROJECT_ROOT, "lancedb_msmarco")
-url = "https://huggingface.co/datasets/ai4bharat/MSMARCO-XI/resolve/main/validation/hinval.parquet"
+parquet_filename = os.getenv("PARQUET_FILE", os.path.join(PROJECT_ROOT, "hinval.parquet"))
+db_path = os.getenv("LANCEDB_PATH", os.path.join(PROJECT_ROOT, "lancedb_msmarco"))
+url = os.getenv(
+    "DATASET_URL",
+    "https://huggingface.co/datasets/ai4bharat/MSMARCO-XI/resolve/main/validation/hinval.parquet"
+)
 
 def download_dataset():
     print("--> Downloading Hindi validation dataset (~462MB)...")

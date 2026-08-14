@@ -22,9 +22,9 @@ interface ChatInputBarProps {
   audioLevel?: number;
   liveTranscript?: string;
   onToggleRecording: () => void;
-  onStartRecording: () => void;
-  onStopRecording: () => void;
-  sampleQueries: Array<{ label: string; text: string }>;
+  onStartRecording?: () => void;
+  onStopRecording?: () => void;
+  sampleQueries?: Array<{ label: string; text: string }>;
   selectedLanguage: string;
 }
 
@@ -37,7 +37,6 @@ export function ChatInputBar({
   onToggleRecording,
   onStartRecording,
   onStopRecording,
-  sampleQueries,
   selectedLanguage,
 }: ChatInputBarProps) {
   const [text, setText] = useState('');
@@ -94,25 +93,7 @@ export function ChatInputBar({
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto px-4 pb-4 md:pb-6 space-y-3">
-      {/* Quick Suggestion Pills above the input */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar justify-start md:justify-center">
-        {sampleQueries.slice(0, 4).map((item, idx) => (
-          <button
-            key={idx}
-            type="button"
-            onClick={() => {
-              sounds.playBlip();
-              onSendMessage(item.text);
-            }}
-            disabled={isProcessing}
-            className="shrink-0 bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-zinc-100 text-[11px] font-mono px-3 py-1 rounded-full transition-all shadow-xs hover:border-emerald-500/40 cursor-pointer disabled:opacity-40"
-          >
-            {item.label}
-          </button>
-        ))}
-      </div>
-
+    <div className="w-full max-w-3xl mx-auto px-4 pb-4 md:pb-6">
       {/* Main Floating Input Capsule */}
       <div
         className={`w-full rounded-2xl md:rounded-3xl border transition-all duration-300 relative shadow-2xl backdrop-blur-2xl ${
