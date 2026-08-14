@@ -22,6 +22,9 @@ lancedb_msmarco/
 .env*
 !.env.example
 
+# Private Session Checkpoints
+CHAT_SESSION_CHECKPOINT.md
+
 # Misc & Logs
 .DS_Store
 *.pem
