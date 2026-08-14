@@ -66,6 +66,7 @@ export default function SonicProfessionalStudio() {
     isRecording,
     isProcessing,
     audioLevel,
+    liveTranscript,
     response,
     history,
     startRecording,
@@ -283,12 +284,13 @@ export default function SonicProfessionalStudio() {
           )}
         </div>
 
-        {/* Bottom Floating Input Dock (ChatGPT & Perplexity Signature Component) */}
+        {/* Bottom Floating Input Dock */}
         <ChatInputBar
           onSendMessage={sendTextQuery}
           isProcessing={isProcessing}
           isRecording={isRecording}
           audioLevel={audioLevel}
+          liveTranscript={liveTranscript}
           onToggleRecording={toggleRecording}
           onStartRecording={startRecording}
           onStopRecording={stopRecording}

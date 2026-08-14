@@ -38,15 +38,21 @@ export function useVoiceRAG(
   const [isRecording, setIsRecording] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [audioLevel, setAudioLevel] = useState(0);
+  const [liveTranscript, setLiveTranscript] = useState('');
   const [response, setResponse] = useState<RAGResponse | null>(null);
   const [history, setHistory] = useState<RAGResponse[]>([]);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const recognitionRef = useRef<any>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const streamRef = useRef<MediaStream | null>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
   const animFrameRef = useRef<number | null>(null);
   const isStartingRef = useRef<boolean>(false);
+  const silenceIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const finalizeTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const lastSpeechTimeRef = useRef<number>(0);
+  const hasSpokenRef = useRef<boolean>(false);
 
   // Send audio payload via direct HTTP endpoint with strict timeout safeguards
   const processAudioBlob = useCallback(
@@ -113,12 +119,132 @@ export function useVoiceRAG(
     [httpBackendUrl, languageCode]
   );
 
+  const stopRecording = useCallback(() => {
+    if (silenceIntervalRef.current) {
+      clearInterval(silenceIntervalRef.current);
+      silenceIntervalRef.current = null;
+    }
+
+    if (finalizeTimerRef.current) {
+      clearTimeout(finalizeTimerRef.current);
+      finalizeTimerRef.current = null;
+    }
+
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.stop();
+      } catch (e) {}
+      recognitionRef.current = null;
+    }
+    setLiveTranscript('');
+
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+      setIsProcessing(true);
+    } else if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => track.stop());
+      streamRef.current = null;
+      setIsRecording(false);
+    }
+  }, []);
+
   const startRecording = useCallback(async () => {
     if (isStartingRef.current || isRecording) return;
     isStartingRef.current = true;
 
     try {
       audioChunksRef.current = [];
+      setLiveTranscript('');
+      hasSpokenRef.current = false;
+      lastSpeechTimeRef.current = Date.now();
+
+      // Start continuous interval VAD ticker (polls every 100ms)
+      if (silenceIntervalRef.current) {
+        clearInterval(silenceIntervalRef.current);
+      }
+      silenceIntervalRef.current = setInterval(() => {
+        const timeSinceActivity = Date.now() - lastSpeechTimeRef.current;
+        if (hasSpokenRef.current) {
+          // 2.5s thinking buffer: auto-sends when user pauses for 2500ms
+          if (timeSinceActivity >= 2500) {
+            stopRecording();
+          }
+        } else {
+          // 2.5s no-speech timeout: auto-closes if nothing is spoken for 2.5s
+          if (timeSinceActivity >= 2500) {
+            stopRecording();
+          }
+        }
+      }, 100);
+
+      // Start Google Assistant-style speech recognition (single-turn query mode)
+      if (typeof window !== 'undefined') {
+        const SpeechRec =
+          (window as any).SpeechRecognition ||
+          (window as any).webkitSpeechRecognition;
+        if (SpeechRec) {
+          try {
+            const rec = new SpeechRec();
+            rec.continuous = false; // Google Assistant mode: auto-detects sentence completion
+            rec.interimResults = true;
+            rec.lang = languageCode;
+
+            rec.onresult = (event: any) => {
+              let textAccumulator = '';
+              let isFinalSentence = false;
+              for (let i = 0; i < event.results.length; ++i) {
+                textAccumulator += event.results[i][0].transcript;
+                if (event.results[i].isFinal) {
+                  isFinalSentence = true;
+                }
+              }
+              if (textAccumulator.trim()) {
+                setLiveTranscript(textAccumulator.trim());
+                hasSpokenRef.current = true;
+                lastSpeechTimeRef.current = Date.now();
+
+                // Clear previous finalize timer and set 2.5s thinking grace period
+                if (finalizeTimerRef.current) {
+                  clearTimeout(finalizeTimerRef.current);
+                }
+                finalizeTimerRef.current = setTimeout(() => {
+                  stopRecording();
+                }, 2500);
+              }
+            };
+
+            // Speech-End detection with 2.5s thinking grace period
+            rec.onspeechend = () => {
+              if (hasSpokenRef.current) {
+                if (finalizeTimerRef.current) {
+                  clearTimeout(finalizeTimerRef.current);
+                }
+                finalizeTimerRef.current = setTimeout(() => {
+                  stopRecording();
+                }, 2500);
+              }
+            };
+
+            rec.onend = () => {
+              if (hasSpokenRef.current) {
+                if (finalizeTimerRef.current) {
+                  clearTimeout(finalizeTimerRef.current);
+                }
+                finalizeTimerRef.current = setTimeout(() => {
+                  stopRecording();
+                }, 2500);
+              }
+            };
+
+            rec.onerror = () => {};
+            rec.start();
+            recognitionRef.current = rec;
+          } catch (e) {
+            // SpeechRecognition is optional / progressive enhancement
+          }
+        }
+      }
 
       // Request microphone stream
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -130,7 +256,7 @@ export function useVoiceRAG(
       });
       streamRef.current = stream;
 
-      // Setup Web Audio Volume Meter
+      // Setup Web Audio Volume Meter & Adaptive Energy VAD
       try {
         const AudioCtx =
           window.AudioContext ||
@@ -143,6 +269,9 @@ export function useVoiceRAG(
         source.connect(analyser);
 
         const dataArray = new Uint8Array(analyser.frequencyBinCount);
+        let sampleCount = 0;
+        let ambientFloor = 0.08;
+
         const updateMeter = () => {
           analyser.getByteFrequencyData(dataArray);
           let sum = 0;
@@ -150,7 +279,22 @@ export function useVoiceRAG(
             sum += dataArray[i];
           }
           const avg = sum / dataArray.length;
-          setAudioLevel(Math.min(1, avg / 75));
+          const currentLevel = Math.min(1, avg / 75);
+          setAudioLevel(currentLevel);
+
+          // Calibrate ambient noise floor during first 20 frames
+          if (sampleCount < 20) {
+            ambientFloor = Math.max(0.05, Math.min(0.25, currentLevel));
+            sampleCount++;
+          }
+
+          // Distinguish actual speech from ambient microphone noise
+          const speechThreshold = Math.max(0.30, ambientFloor + 0.15);
+          if (currentLevel > speechThreshold) {
+            hasSpokenRef.current = true;
+            lastSpeechTimeRef.current = Date.now();
+          }
+
           animFrameRef.current = requestAnimationFrame(updateMeter);
         };
         updateMeter();
@@ -180,6 +324,11 @@ export function useVoiceRAG(
       };
 
       recorder.onstop = () => {
+        if (silenceIntervalRef.current) {
+          clearInterval(silenceIntervalRef.current);
+          silenceIntervalRef.current = null;
+        }
+
         if (animFrameRef.current) {
           cancelAnimationFrame(animFrameRef.current);
         }
@@ -211,19 +360,7 @@ export function useVoiceRAG(
     } finally {
       isStartingRef.current = false;
     }
-  }, [isRecording, processAudioBlob]);
-
-  const stopRecording = useCallback(() => {
-    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
-      mediaRecorderRef.current.stop();
-      setIsRecording(false);
-      setIsProcessing(true);
-    } else if (streamRef.current) {
-      streamRef.current.getTracks().forEach((track) => track.stop());
-      streamRef.current = null;
-      setIsRecording(false);
-    }
-  }, []);
+  }, [isRecording, languageCode, processAudioBlob, stopRecording]);
 
   const toggleRecording = useCallback(() => {
     if (isRecording) {
@@ -300,6 +437,12 @@ export function useVoiceRAG(
   // Clean up on unmount
   useEffect(() => {
     return () => {
+      if (silenceIntervalRef.current) {
+        clearInterval(silenceIntervalRef.current);
+      }
+      if (finalizeTimerRef.current) {
+        clearTimeout(finalizeTimerRef.current);
+      }
       if (animFrameRef.current) {
         cancelAnimationFrame(animFrameRef.current);
       }
@@ -313,6 +456,7 @@ export function useVoiceRAG(
     isRecording,
     isProcessing,
     audioLevel,
+    liveTranscript,
     response,
     history,
     startRecording,

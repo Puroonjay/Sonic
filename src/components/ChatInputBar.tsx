@@ -20,6 +20,7 @@ interface ChatInputBarProps {
   isProcessing: boolean;
   isRecording: boolean;
   audioLevel?: number;
+  liveTranscript?: string;
   onToggleRecording: () => void;
   onStartRecording: () => void;
   onStopRecording: () => void;
@@ -32,6 +33,7 @@ export function ChatInputBar({
   isProcessing,
   isRecording,
   audioLevel = 0,
+  liveTranscript = '',
   onToggleRecording,
   onStartRecording,
   onStopRecording,
@@ -40,6 +42,14 @@ export function ChatInputBar({
 }: ChatInputBarProps) {
   const [text, setText] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const wasRecordingRef = useRef<boolean>(false);
+
+  // Sync live real-time speech recognition transcript into the searchbox
+  useEffect(() => {
+    if (isRecording && liveTranscript) {
+      setText(liveTranscript);
+    }
+  }, [isRecording, liveTranscript]);
 
   // Auto-resize textarea
   useEffect(() => {
@@ -48,6 +58,17 @@ export function ChatInputBar({
       textareaRef.current.style.height = `${Math.min(120, textareaRef.current.scrollHeight)}px`;
     }
   }, [text]);
+
+  // Instantly clear searchbox when recording stops
+  useEffect(() => {
+    if (wasRecordingRef.current && !isRecording) {
+      setText('');
+      if (textareaRef.current) {
+        textareaRef.current.style.height = 'auto';
+      }
+    }
+    wasRecordingRef.current = isRecording;
+  }, [isRecording]);
 
   const handleSubmit = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -96,53 +117,63 @@ export function ChatInputBar({
       <div
         className={`w-full rounded-2xl md:rounded-3xl border transition-all duration-300 relative shadow-2xl backdrop-blur-2xl ${
           isRecording
-            ? 'bg-rose-950/40 border-rose-500/60 shadow-rose-950/40 ring-4 ring-rose-500/20'
+            ? 'bg-zinc-900/95 border-emerald-500/60 shadow-emerald-950/40 ring-4 ring-emerald-500/20 shadow-black/80'
             : 'bg-zinc-900/90 border-zinc-800/90 focus-within:border-emerald-500/50 focus-within:ring-2 focus-within:ring-emerald-500/10 shadow-black/60'
         }`}
       >
         <form onSubmit={handleSubmit} className="p-3 md:p-3.5 flex flex-col gap-2">
-          {/* Live Recording Soundwave Bar (Shows inside input when recording) */}
+          {/* Live Recording Ambient Audio Indicator */}
           {isRecording && (
-            <div className="flex items-center justify-between bg-rose-950/60 border border-rose-800/40 rounded-xl px-3 py-2 animate-in fade-in">
-              <div className="flex items-center gap-2 text-rose-300 text-xs font-mono font-bold">
-                <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping" />
-                <span>LISTENING TO YOUR VOICE... (CLICK MIC TO STOP & SUBMIT)</span>
+            <div className="flex items-center justify-between bg-zinc-950/70 border border-emerald-500/25 rounded-xl px-3.5 py-2 animate-in fade-in duration-300 backdrop-blur-md">
+              <div className="flex items-center gap-2.5">
+                <div className="relative flex items-center justify-center">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="absolute w-4 h-4 rounded-full bg-emerald-500/30 animate-ping" />
+                </div>
+                <span className="text-xs font-sans font-medium text-zinc-200">
+                  Listening to your voice...
+                </span>
               </div>
 
-              {/* Dynamic Audio Level Meter */}
-              <div className="flex items-center gap-1 h-5">
-                {[20, 50, 90, 40, 80, 100, 60, 30].map((baseHeight, idx) => (
-                  <div
-                    key={idx}
-                    className="w-1 bg-rose-400 rounded-full transition-all duration-75"
-                    style={{
-                      height: `${Math.max(4, baseHeight * Math.max(0.3, audioLevel))}%`,
-                    }}
-                  />
-                ))}
+              {/* Dynamic Gradient Acoustic Visualizer Wave */}
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1 h-5 px-2.5 py-0.5 bg-emerald-950/50 rounded-full border border-emerald-500/20">
+                  {[25, 60, 95, 45, 80, 100, 70, 40, 85, 30].map((baseHeight, idx) => (
+                    <div
+                      key={idx}
+                      className="w-0.5 bg-gradient-to-t from-emerald-400 to-cyan-300 rounded-full transition-all duration-75"
+                      style={{
+                        height: `${Math.max(20, baseHeight * Math.max(0.25, audioLevel))}%`,
+                      }}
+                    />
+                  ))}
+                </div>
+                <span className="text-[10px] font-mono text-zinc-500 hidden sm:inline">
+                  Auto-sends on pause
+                </span>
               </div>
             </div>
           )}
 
-          {/* Textarea Input */}
-          {!isRecording && (
-            <div className="flex items-end gap-2">
-              <textarea
-                ref={textareaRef}
-                rows={1}
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder={
-                  isProcessing
-                    ? '⚡ Sonic is retrieving from MSMARCO-XI & synthesizing...'
-                    : 'Ask Sonic anything, or click the mic button to speak in 10+ Indic languages...'
-                }
-                disabled={isProcessing}
-                className="w-full bg-transparent text-zinc-100 placeholder-zinc-500 text-sm md:text-base focus:outline-none resize-none max-h-32 font-sans py-1 leading-relaxed"
-              />
-            </div>
-          )}
+          {/* Textarea Input (Always visible, streams speech in real time) */}
+          <div className="flex items-end gap-2">
+            <textarea
+              ref={textareaRef}
+              rows={1}
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder={
+                isRecording
+                  ? '🎙️ Listening... your spoken words will appear here in real time...'
+                  : isProcessing
+                  ? '⚡ Sonic is retrieving from MSMARCO-XI & synthesizing...'
+                  : 'Ask Sonic anything, or click the mic button to speak in 10+ Indic languages...'
+              }
+              disabled={isProcessing}
+              className="w-full bg-transparent text-zinc-100 placeholder-zinc-500 text-sm md:text-base focus:outline-none resize-none max-h-32 font-sans py-1 leading-relaxed"
+            />
+          </div>
 
           {/* Bottom Dock Controls */}
           <div className="flex items-center justify-between pt-2 border-t border-zinc-800/60 text-xs font-mono">
