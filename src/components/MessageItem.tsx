@@ -37,7 +37,7 @@ interface MessageItemProps {
 
 export function MessageItem({
   response,
-  languageCode = 'hi-IN',
+  languageCode = 'en-IN',
   onOpenSourceModal,
   isLatest,
   isAudioPlaying,

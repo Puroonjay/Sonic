@@ -11,6 +11,7 @@ import { GameCharacterAvatar } from '@/src/components/GameCharacterAvatar';
 import { CyberBackground } from '@/src/components/CyberBackground';
 import { CharacterState } from '@/src/components/SonicCharacter';
 import { SonicLogo } from '@/src/components/SonicLogo';
+import { SonicSplashIntro } from '@/src/components/SonicSplashIntro';
 import { sounds } from '@/src/lib/soundEffects';
 import { ttsEngine } from '@/src/lib/ttsEngine';
 import {
@@ -24,8 +25,8 @@ import {
 } from 'lucide-react';
 
 const SUPPORTED_LANGUAGES = [
-  { code: 'hi-IN', label: '🇮🇳 Hindi (हिन्दी)' },
   { code: 'en-IN', label: '🌐 English (Indian)' },
+  { code: 'hi-IN', label: '🇮🇳 Hindi (हिन्दी)' },
   { code: 'ta-IN', label: '🇮🇳 Tamil (தமிழ்)' },
   { code: 'te-IN', label: '🇮🇳 Telugu (తెలుగు)' },
   { code: 'bn-IN', label: '🇮🇳 Bengali (বাংলা)' },
@@ -50,8 +51,9 @@ export default function SonicProfessionalStudio() {
     }
   }, []);
 
-  const [selectedLanguage, setSelectedLanguage] = useState('hi-IN');
+  const [selectedLanguage, setSelectedLanguage] = useState('en-IN');
   const [mounted, setMounted] = useState(false);
+  const [showIntro, setShowIntro] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [activeCitationModal, setActiveCitationModal] = useState<{
@@ -138,24 +140,16 @@ export default function SonicProfessionalStudio() {
   const selectedLangObj = SUPPORTED_LANGUAGES.find((l) => l.code === selectedLanguage);
 
   if (!mounted) {
-    return (
-      <main className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col items-center justify-center gap-4 selection:bg-emerald-500 selection:text-black">
-        <div className="relative flex items-center justify-center">
-          <div className="absolute inset-0 rounded-2xl bg-emerald-500/20 blur-xl animate-pulse" />
-          <SonicLogo size={48} glow={true} />
-        </div>
-        <div className="flex items-center gap-2">
-          {/* <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> */}
-          <span className="text-[11px] font-semibold tracking-widest text-zinc-400 uppercase font-sans">
-            Sonic
-          </span>
-        </div>
-      </main>
-    );
+    return <SonicSplashIntro onComplete={() => {}} />;
   }
 
   return (
     <div className="h-screen w-screen flex bg-zinc-950 text-zinc-100 overflow-hidden font-sans selection:bg-emerald-500 selection:text-black">
+      {/* Dynamic Animated Startup Logo Intro */}
+      {showIntro && (
+        <SonicSplashIntro onComplete={() => setShowIntro(false)} />
+      )}
+
       {/* 60 FPS Ambient Cyber Background */}
       <CyberBackground isListening={isRecording} isProcessing={isProcessing} />
 
@@ -182,7 +176,7 @@ export default function SonicProfessionalStudio() {
           onToggleSidebar={() => setIsSidebarOpen((prev) => !prev)}
           isAudioEnabled={isAudioEnabled}
           onToggleAudio={() => setIsAudioEnabled((prev) => !prev)}
-          selectedLanguageLabel={selectedLangObj?.label || 'Hindi'}
+          selectedLanguageLabel={selectedLangObj?.label || '🌐 English (Indian)'}
         />
 
         {/* Scrollable Main Conversational Canvas */}
@@ -200,6 +194,8 @@ export default function SonicProfessionalStudio() {
                   languageCode={selectedLanguage}
                   isAudioPlaying={isAudioEnabled}
                   onAudioToggle={() => setIsAudioEnabled((prev) => !prev)}
+                  onTriggerQuery={(q) => sendTextQuery(q)}
+                  onStartVoice={startRecording}
                 />
               </div>
 
@@ -250,6 +246,8 @@ export default function SonicProfessionalStudio() {
                     languageCode={selectedLanguage}
                     isAudioPlaying={isAudioEnabled}
                     onAudioToggle={() => setIsAudioEnabled((prev) => !prev)}
+                    onTriggerQuery={(q) => sendTextQuery(q)}
+                    onStartVoice={startRecording}
                   />
                 </div>
               </div>

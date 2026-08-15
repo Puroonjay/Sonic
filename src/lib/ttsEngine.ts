@@ -50,7 +50,7 @@ class UniversalIndicTTSEngine {
 
   public async speak(
     text: string,
-    langCode: string = 'hi-IN',
+    langCode: string = 'en-IN',
     onEnd?: () => void,
     onError?: () => void,
     force: boolean = false

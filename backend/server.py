@@ -76,12 +76,12 @@ class StructuredRAGResponse(BaseModel):
 
 class QueryRequest(BaseModel):
     text: str
-    language_code: Optional[str] = "hi-IN"
+    language_code: Optional[str] = "en-IN"
     bypass_stt: bool = True
 
 class TTSRequest(BaseModel):
     text: str
-    language_code: Optional[str] = "hi-IN"
+    language_code: Optional[str] = "en-IN"
 
 class QueryDetailItem(BaseModel):
     query: str
@@ -217,7 +217,7 @@ def evaluate_tier1_safety_guardrail(query: str) -> Optional[str]:
     return None
 
 @async_retry(max_attempts=2, delay=0.1)
-async def call_sarvam_stt_harness(audio_bytes: bytes, language_code: str = "hi-IN") -> str:
+async def call_sarvam_stt_harness(audio_bytes: bytes, language_code: str = "en-IN") -> str:
     """Harnessed STT with retries and structured error handling."""
     if not SARVAM_API_KEY or SARVAM_API_KEY == "YOUR_SARVAM_KEY":
         return "what is the capital of india"
@@ -382,7 +382,7 @@ async def query_endpoint(req: QueryRequest):
     return await execute_rag_pipeline(req.text, stt_ms=0.0)
 
 @app.post("/api/voice", response_model=StructuredRAGResponse)
-async def voice_endpoint(file: UploadFile = File(...), language_code: str = Form("hi-IN")):
+async def voice_endpoint(file: UploadFile = File(...), language_code: str = Form("en-IN")):
     """Direct voice audio upload endpoint with Sarvam STT & sub-200ms RAG."""
     audio_bytes = await file.read()
     if not audio_bytes:
@@ -417,8 +417,8 @@ async def tts_endpoint(req: TTSRequest):
 
     # Map Indic language codes to standard codes
     lang_map = {
-        "hi-IN": "hi", "hi": "hi",
         "en-IN": "en", "en-US": "en", "en": "en",
+        "hi-IN": "hi", "hi": "hi",
         "ta-IN": "ta", "ta": "ta",
         "te-IN": "te", "te": "te",
         "bn-IN": "bn", "bn": "bn",
@@ -430,7 +430,7 @@ async def tts_endpoint(req: TTSRequest):
         "od-IN": "hi",
     }
 
-    target_lang = lang_map.get(req.language_code, "hi")
+    target_lang = lang_map.get(req.language_code, "en")
 
     def _generate_audio(text: str, lang: str) -> bytes:
         tts = gTTS(text=text, lang=lang, slow=False)
@@ -444,13 +444,13 @@ async def tts_endpoint(req: TTSRequest):
         return Response(content=audio_content, media_type="audio/mpeg")
     except Exception as e:
         try:
-            audio_content = await asyncio.to_thread(_generate_audio, req.text, "hi")
+            audio_content = await asyncio.to_thread(_generate_audio, req.text, "en")
             return Response(content=audio_content, media_type="audio/mpeg")
         except Exception as e2:
             raise HTTPException(status_code=500, detail=f"TTS synthesis error: {str(e2)}")
 
 @app.websocket("/ws/rag")
-async def websocket_rag_endpoint(websocket: WebSocket, language_code: str = "hi-IN"):
+async def websocket_rag_endpoint(websocket: WebSocket, language_code: str = "en-IN"):
     """Real-time sub-200ms voice streaming WebSocket endpoint supporting 10+ Indic languages."""
     await websocket.accept()
     print(f"--> WebSocket Client Connected (Language: {language_code})")

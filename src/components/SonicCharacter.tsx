@@ -310,18 +310,20 @@ export function SonicCharacter({
               strokeWidth="2"
             />
 
-            {/* Visor Scanline Sweep Effect */}
+            {/* Visor Scanline Sweep Effect - Strictly clipped inside robot visor */}
             {state === 'thinking' && (
-              <line
-                x1="46"
-                y1="60"
-                x2="154"
-                y2="60"
-                stroke="#06b6d4"
-                strokeWidth="2"
-                opacity="0.8"
-                className="animate-scanline"
-              />
+              <g clipPath="url(#sonicVisorClip)">
+                <line
+                  x1="46"
+                  y1="60"
+                  x2="154"
+                  y2="60"
+                  stroke="#06b6d4"
+                  strokeWidth="2"
+                  opacity="0.8"
+                  className="animate-scanline"
+                />
+              </g>
             )}
 
             {/* Visor Gloss Reflection */}
@@ -410,8 +412,11 @@ export function SonicCharacter({
             <circle cx="60" cy="104" r="5" fill="#10b981" fillOpacity={state === 'listening' || state === 'speaking' ? '0.35' : '0.15'} />
             <circle cx="140" cy="104" r="5" fill="#10b981" fillOpacity={state === 'listening' || state === 'speaking' ? '0.35' : '0.15'} />
 
-            {/* Gradients */}
+            {/* Gradients & Clip Paths */}
             <defs>
+              <clipPath id="sonicVisorClip">
+                <rect x="46" y="56" width="108" height="72" rx="20" />
+              </clipPath>
               <linearGradient id="helmetGradient" x1="100" y1="42" x2="100" y2="142" gradientUnits="userSpaceOnUse">
                 <stop stopColor="#27272a" />
                 <stop offset="1" stopColor="#18181b" />

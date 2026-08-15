@@ -62,8 +62,8 @@ from backend.server import (
 )
 
 LANGUAGES = [
-    ("🇮🇳 Hindi (हिन्दी)", "hi-IN"),
     ("🌐 English (Indian)", "en-IN"),
+    ("🇮🇳 Hindi (हिन्दी)", "hi-IN"),
     ("🇮🇳 Tamil (தமிழ்)", "ta-IN"),
     ("🇮🇳 Telugu (తెలుగు)", "te-IN"),
     ("🇮🇳 Bengali (বাংলা)", "bn-IN"),
@@ -84,7 +84,7 @@ def run_gradio_rag(
     language_label: str
 ):
     """Gradio handler for text or voice queries with ZeroGPU acceleration."""
-    lang_code = LANG_MAP.get(language_label, "hi-IN")
+    lang_code = LANG_MAP.get(language_label, "en-IN")
     
     # 1. Process Voice if provided
     transcript = query_text.strip() if query_text else ""
@@ -205,7 +205,7 @@ with gr.Blocks(theme=custom_theme, title="Sonic — Sub-200ms Multilingual Voice
                 with gr.Column(scale=1):
                     lang_dropdown = gr.Dropdown(
                         choices=[label for label, _ in LANGUAGES],
-                        value="🇮🇳 Hindi (हिन्दी)",
+                        value="🌐 English (Indian)",
                         label="Select Indic Language"
                     )
                     text_input = gr.Textbox(

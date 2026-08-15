@@ -33,7 +33,7 @@ export interface RAGResponse {
 export function useVoiceRAG(
   backendWsUrl?: string,
   httpBackendUrl: string = '',
-  languageCode: string = 'hi-IN'
+  languageCode: string = 'en-IN'
 ) {
   const [isRecording, setIsRecording] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
