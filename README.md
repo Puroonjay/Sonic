@@ -1,3 +1,15 @@
+---
+title: Sonic Sub-200ms Multilingual Voice AI
+emoji: ⚡
+colorFrom: green
+colorTo: blue
+sdk: gradio
+sdk_version: 5.15.0
+app_file: app.py
+pinned: false
+license: mit
+---
+
 # Sonic: Sub-200ms Multilingual Voice AI Engine
 
 **Developed by Team WeHustlers**

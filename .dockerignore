@@ -1,0 +1,15 @@
+.git
+.github
+.next
+node_modules
+venv
+env
+*.parquet
+*.pyc
+__pycache__
+.DS_Store
+*.log
+.env*
+!backend/
+!lancedb_msmarco/
+!dataset_prep/

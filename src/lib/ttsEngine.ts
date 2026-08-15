@@ -9,7 +9,7 @@ class UniversalIndicTTSEngine {
   private currentAudio: HTMLAudioElement | null = null;
   private synth: SpeechSynthesis | null = null;
   private voices: SpeechSynthesisVoice[] = [];
-  private backendUrl: string = '';
+  private backendUrl: string = process.env.NEXT_PUBLIC_HTTP_BACKEND_URL || '';
   private lastSpokenText: string = '';
   private lastSpokenTimestamp: number = 0;
 

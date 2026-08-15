@@ -13,10 +13,8 @@ env/
 *.tsbuildinfo
 next-env.d.ts
 
-# Large Data & Vector DBs (Never commit large files to GitHub)
+# Large Data Files (Never commit raw parquet files to GitHub)
 *.parquet
-lancedb_msmarco/
-*.lance
 
 # Environment & Credentials
 .env*

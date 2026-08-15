@@ -83,6 +83,13 @@ class TTSRequest(BaseModel):
     text: str
     language_code: Optional[str] = "hi-IN"
 
+class QueryDetailItem(BaseModel):
+    query: str
+    answer: str
+    grounded: bool
+    refused: bool
+    total_ms: float
+
 class BenchmarkResult(BaseModel):
     total_queries: int
     p50_total_ms: float
@@ -97,14 +104,22 @@ class BenchmarkResult(BaseModel):
     grounded_count: int
     refused_count: int
     sub_200ms_compliance_rate: float
-    query_details: List[Dict[str, Any]]
+    query_details: List[QueryDetailItem] = []
 
 # =====================================================================
 # APP & RESOURCE INITIALIZATION
 # =====================================================================
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DB_PATH = os.path.join(PROJECT_ROOT, "lancedb_msmarco")
+DB_PATH = os.getenv("DB_PATH") or (
+    os.path.join(PROJECT_ROOT, "lancedb_msmarco")
+    if os.path.exists(os.path.join(PROJECT_ROOT, "lancedb_msmarco"))
+    else (
+        os.path.join(os.getcwd(), "lancedb_msmarco")
+        if os.path.exists(os.path.join(os.getcwd(), "lancedb_msmarco"))
+        else os.path.join(PROJECT_ROOT, "lancedb_msmarco")
+    )
+)
 
 SARVAM_API_KEY = os.getenv("SARVAM_API_KEY", "YOUR_SARVAM_KEY")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "YOUR_GROQ_KEY")
@@ -116,40 +131,54 @@ table = None
 embed_model = None
 http_client: Optional[httpx.AsyncClient] = None
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
+async def initialize_resources():
     global db, table, embed_model, http_client, SARVAM_API_KEY, GROQ_API_KEY
+    if http_client is not None and embed_model is not None and table is not None:
+        return
     load_env_file()
     SARVAM_API_KEY = os.getenv("SARVAM_API_KEY", "YOUR_SARVAM_KEY")
     GROQ_API_KEY = os.getenv("GROQ_API_KEY", "YOUR_GROQ_KEY")
 
     print("--> Initializing Sonic Engine & Pre-warming Resources...")
     
-    # Pre-warm HTTP client with connection pooling
-    http_client = httpx.AsyncClient(
-        timeout=httpx.Timeout(5.0, connect=2.0),
-        limits=httpx.Limits(max_keepalive_connections=20, max_connections=50)
-    )
+    if http_client is None:
+        http_client = httpx.AsyncClient(
+            timeout=httpx.Timeout(5.0, connect=2.0),
+            limits=httpx.Limits(max_keepalive_connections=20, max_connections=50)
+        )
 
-    # Initialize LanceDB connection
-    try:
-        db = lancedb.connect(DB_PATH)
-        if "msmarco_vector_store" in db.table_names():
-            table = db.open_table("msmarco_vector_store")
-            print(f"--> Connected to LanceDB vector table at {DB_PATH} ({len(table)} records)")
-        else:
-            print(f"--> Notice: 'msmarco_vector_store' table not found yet. Run build_vector_index.py to populate.")
-    except Exception as e:
-        print(f"--> LanceDB connection warning: {e}")
+    resolved_db_path = DB_PATH
+    if not os.path.exists(resolved_db_path):
+        for candidate in [
+            os.path.join(PROJECT_ROOT, "lancedb_msmarco"),
+            os.path.join(os.getcwd(), "lancedb_msmarco"),
+            "lancedb_msmarco",
+            "/home/user/app/lancedb_msmarco"
+        ]:
+            if os.path.exists(candidate):
+                resolved_db_path = candidate
+                break
 
-    # Load Embedding Model
-    embed_model = SentenceTransformer("BAAI/bge-small-en-v1.5")
-    # Warmup forward pass
-    _ = embed_model.encode(["warmup query"])
-    print("--> Sonic Engine Ready!")
+    if table is None:
+        try:
+            db = lancedb.connect(resolved_db_path)
+            if "msmarco_vector_store" in db.table_names():
+                table = db.open_table("msmarco_vector_store")
+                print(f"--> Connected to LanceDB vector table at {resolved_db_path} ({len(table)} records)")
+            else:
+                print(f"--> Notice: 'msmarco_vector_store' table not found in {resolved_db_path}. Run build_vector_index.py to populate.")
+        except Exception as e:
+            print(f"--> LanceDB connection warning: {e}")
 
+    if embed_model is None:
+        embed_model = SentenceTransformer("BAAI/bge-small-en-v1.5")
+        _ = embed_model.encode(["warmup query"])
+        print("--> Sonic Engine Ready!")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await initialize_resources()
     yield
-
     if http_client:
         await http_client.aclose()
 
@@ -544,18 +573,32 @@ async def run_benchmark_endpoint(sample_count: int = 25):
         refused_count=refused_count,
         sub_200ms_compliance_rate=compliance_rate,
         query_details=[
-            {
-                "query": r.transcript,
-                "answer": r.answer[:80] + "...",
-                "grounded": r.grounded,
-                "refused": r.refused,
-                "total_ms": r.metrics.total_ms
-            }
+            QueryDetailItem(
+                query=r.transcript,
+                answer=r.answer[:80] + "...",
+                grounded=r.grounded,
+                refused=r.refused,
+                total_ms=r.metrics.total_ms
+            )
             for r in results[:10]
         ]
     )
 
+@app.get("/")
+@app.head("/")
+async def root_status():
+    return {
+        "status": "online",
+        "name": "Sonic Sub-200ms Multilingual Voice AI Engine",
+        "version": "2.0.0",
+        "docs": "/docs",
+        "health": "/api/health",
+        "table_connected": table is not None,
+        "table_records": len(table) if table is not None else 0
+    }
+
 @app.get("/api/health")
+@app.head("/api/health")
 async def health_check():
     return {
         "status": "healthy",

@@ -1,0 +1,2 @@
+*.lance filter=lfs diff=lfs merge=lfs -text
+lancedb_msmarco/** filter=lfs diff=lfs merge=lfs -text
