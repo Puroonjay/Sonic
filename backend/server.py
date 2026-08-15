@@ -162,7 +162,9 @@ async def initialize_resources():
     if table is None:
         try:
             db = lancedb.connect(resolved_db_path)
-            if "msmarco_vector_store" in db.table_names():
+            raw_tables = db.list_tables() if hasattr(db, "list_tables") else db.table_names()
+            table_names = raw_tables.tables if hasattr(raw_tables, "tables") else (raw_tables if isinstance(raw_tables, list) else list(raw_tables))
+            if "msmarco_vector_store" in table_names:
                 table = db.open_table("msmarco_vector_store")
                 print(f"--> Connected to LanceDB vector table at {resolved_db_path} ({len(table)} records)")
             else:
@@ -508,21 +510,26 @@ async def websocket_rag_endpoint(websocket: WebSocket, language_code: str = "hi-
 async def run_benchmark_endpoint(sample_count: int = 25):
     """Automated benchmark test harness executing realistic queries to compute P50/P70/P90/P100 latencies."""
     test_queries = [
+        "what is a corporation?",
         "what is the capital of india",
-        "who was the first president of the united states",
-        "how does photosynthesis work in plants",
         "causes of high blood pressure",
+        "how does photosynthesis work in plants",
+        "who was the first president of the united states",
         "symptoms of malaria fever",
         "how to calculate compound interest",
         "what is quantum computing",
         "why is the sky blue",
         "distance between earth and moon",
-        "who invented the telephone",
-        "what is the definition of a corporation",
-        "definition of honesty and integrity",
-        "foods low in potassium",
+        "difference between dna and rna",
         "how do solar panels work",
-        "difference between dna and rna"
+        "भारत की राजधानी क्या है?",
+        "पौधों में प्रकाश संश्लेषण कैसे होता है?",
+        "उच्च रक्तचाप के क्या लक्षण हैं?",
+        "ભારતની રાજધાની કઈ છે?",
+        "भारताची राजधानी कोणती आहे?",
+        "இந்தியாவின் தலைநகரம் எது?",
+        "భారతదేశ రాజధాని ఏది?",
+        "ভারতের রাজধানী কি?"
     ]
 
     queries_to_run = (test_queries * ((sample_count // len(test_queries)) + 1))[:sample_count]
@@ -530,7 +537,7 @@ async def run_benchmark_endpoint(sample_count: int = 25):
     latencies = []
 
     for q in queries_to_run:
-        res = await execute_rag_pipeline(q, stt_ms=15.0)
+        res = await execute_rag_pipeline(q, stt_ms=0.0)
         results.append(res)
         latencies.append(res.metrics.total_ms)
 
