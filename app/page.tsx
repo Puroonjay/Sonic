@@ -11,6 +11,7 @@ import { LatencyTelemetryDrawer } from '@/src/components/LatencyTelemetryDrawer'
 import { GameCharacterAvatar } from '@/src/components/GameCharacterAvatar';
 import { CyberBackground } from '@/src/components/CyberBackground';
 import { CharacterState } from '@/src/components/SonicCharacter';
+import { SonicLogo } from '@/src/components/SonicLogo';
 import { sounds } from '@/src/lib/soundEffects';
 import { ttsEngine } from '@/src/lib/ttsEngine';
 import {
@@ -140,10 +141,16 @@ export default function SonicProfessionalStudio() {
 
   if (!mounted) {
     return (
-      <main className="min-h-screen bg-zinc-950 text-zinc-100 flex items-center justify-center font-mono text-xs text-zinc-500">
+      <main className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col items-center justify-center gap-4 selection:bg-emerald-500 selection:text-black">
+        <div className="relative flex items-center justify-center">
+          <div className="absolute inset-0 rounded-2xl bg-emerald-500/20 blur-xl animate-pulse" />
+          <SonicLogo size={48} glow={true} />
+        </div>
         <div className="flex items-center gap-2">
-          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-          <span>INITIALIZING PROFESSIONAL SONIC AI ENGINE...</span>
+          {/* <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> */}
+          <span className="text-[11px] font-semibold tracking-widest text-zinc-400 uppercase font-sans">
+            Sonic
+          </span>
         </div>
       </main>
     );

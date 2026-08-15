@@ -137,8 +137,8 @@ export function MessageItem({
 
       {/* 2. Assistant Response Card (Perplexity & Gemini Style) */}
       <div className="flex items-start gap-3 max-w-3xl mr-auto">
-        {/* Avatar */}
-        <SonicLogo size={32} glow={true} className="shrink-0 mt-0.5" />
+        {/* Avatar (Static, clean, no looping animations in chat) */}
+        <SonicLogo size={32} glow={false} animated={false} className="shrink-0 mt-0.5" />
 
         {/* Message Container */}
         <div className="flex-1 space-y-3 min-w-0">
