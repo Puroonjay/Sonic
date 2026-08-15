@@ -4,23 +4,14 @@ import React from 'react';
 import { SonicLogo } from './SonicLogo';
 import {
   Menu,
-  Sparkles,
-  BarChart3,
   Volume2,
   VolumeX,
-  Database,
-  Layers,
-  Zap,
-  Globe,
-  SlidersHorizontal,
-  ChevronDown
+  Globe
 } from 'lucide-react';
 import { sounds } from '@/src/lib/soundEffects';
 
 interface ChatHeaderProps {
   onToggleSidebar: () => void;
-  onToggleTelemetry: () => void;
-  isTelemetryOpen: boolean;
   isAudioEnabled: boolean;
   onToggleAudio: () => void;
   selectedLanguageLabel: string;
@@ -28,8 +19,6 @@ interface ChatHeaderProps {
 
 export function ChatHeader({
   onToggleSidebar,
-  onToggleTelemetry,
-  isTelemetryOpen,
   isAudioEnabled,
   onToggleAudio,
   selectedLanguageLabel,
@@ -65,7 +54,7 @@ export function ChatHeader({
         </div>
       </div>
 
-      {/* Right Controls: Telemetry Button & Audio Toggle */}
+      {/* Right Controls: Audio Toggle */}
       <div className="flex items-center gap-2">
         {/* Audio Mute/Unmute */}
         <button
@@ -84,26 +73,6 @@ export function ChatHeader({
           {isAudioEnabled ? <Volume2 className="w-4 h-4 text-emerald-400" /> : <VolumeX className="w-4 h-4" />}
           <span className="hidden sm:inline text-[11px] font-semibold">
             {isAudioEnabled ? 'Voice ON' : 'Muted'}
-          </span>
-        </button>
-
-        {/* Telemetry Drawer Toggle */}
-        <button
-          type="button"
-          onClick={() => {
-            sounds.playBlip();
-            onToggleTelemetry();
-          }}
-          className={`px-3 py-1.5 rounded-xl border text-xs font-mono font-bold transition-all flex items-center gap-1.5 shadow-sm ${
-            isTelemetryOpen
-              ? 'bg-emerald-500 text-zinc-950 border-emerald-400 shadow-emerald-500/20'
-              : 'bg-zinc-900 text-zinc-300 border-zinc-800 hover:bg-zinc-850 hover:text-white'
-          }`}
-        >
-          <BarChart3 className="w-3.5 h-3.5" />
-          <span className="hidden sm:inline">Telemetry</span>
-          <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800/40 hidden md:inline">
-            &lt;200ms
           </span>
         </button>
       </div>

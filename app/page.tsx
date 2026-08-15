@@ -7,7 +7,6 @@ import { ChatHeader } from '@/src/components/ChatHeader';
 import { ChatInputBar } from '@/src/components/ChatInputBar';
 import { MessageItem } from '@/src/components/MessageItem';
 import { SourcesDrawer } from '@/src/components/SourcesDrawer';
-import { LatencyTelemetryDrawer } from '@/src/components/LatencyTelemetryDrawer';
 import { GameCharacterAvatar } from '@/src/components/GameCharacterAvatar';
 import { CyberBackground } from '@/src/components/CyberBackground';
 import { CharacterState } from '@/src/components/SonicCharacter';
@@ -54,7 +53,6 @@ export default function SonicProfessionalStudio() {
   const [selectedLanguage, setSelectedLanguage] = useState('hi-IN');
   const [mounted, setMounted] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [isTelemetryOpen, setIsTelemetryOpen] = useState(false);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [activeCitationModal, setActiveCitationModal] = useState<{
     citation: RetrievedCitation;
@@ -182,8 +180,6 @@ export default function SonicProfessionalStudio() {
         {/* Top Header Bar */}
         <ChatHeader
           onToggleSidebar={() => setIsSidebarOpen((prev) => !prev)}
-          onToggleTelemetry={() => setIsTelemetryOpen((prev) => !prev)}
-          isTelemetryOpen={isTelemetryOpen}
           isAudioEnabled={isAudioEnabled}
           onToggleAudio={() => setIsAudioEnabled((prev) => !prev)}
           selectedLanguageLabel={selectedLangObj?.label || 'Hindi'}
@@ -311,15 +307,6 @@ export default function SonicProfessionalStudio() {
         citation={activeCitationModal?.citation || null}
         index={activeCitationModal?.index || 0}
         onClose={() => setActiveCitationModal(null)}
-      />
-
-      {/* Slide-over Telemetry HUD Drawer */}
-      <LatencyTelemetryDrawer
-        isOpen={isTelemetryOpen}
-        onClose={() => setIsTelemetryOpen(false)}
-        currentMetrics={response?.metrics}
-        history={history}
-        httpBackendUrl={HTTP_BACKEND_URL}
       />
     </div>
   );
