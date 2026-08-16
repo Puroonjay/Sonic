@@ -591,8 +591,16 @@ async def run_benchmark_endpoint(sample_count: int = 25):
         ]
     )
 
-@app.get("/")
-@app.head("/")
+@app.get("/env-config.js")
+@app.head("/env-config.js")
+async def env_config():
+    return Response(
+        content="window.__GRADIO_DEV_MODE__ = false;\nwindow.__GRADIO_SSR__ = false;\nwindow.__GRADIO_SPACE__ = true;\n",
+        media_type="application/javascript"
+    )
+
+@app.get("/api/status")
+@app.head("/api/status")
 async def root_status():
     return {
         "status": "online",

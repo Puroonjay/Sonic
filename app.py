@@ -1,3 +1,9 @@
+import spaces
+
+@spaces.GPU
+def gpu_warmup():
+    return True
+
 import os
 import time
 import asyncio
@@ -6,21 +12,6 @@ from typing import Optional, Tuple
 import gradio as gr
 import uvicorn
 from gtts import gTTS
-
-# ZeroGPU decorator support
-try:
-    import spaces
-    has_zerogpu = True
-except ImportError:
-    has_zerogpu = False
-    class spaces:
-        @staticmethod
-        def GPU(func=None, **kwargs):
-            if func is not None and callable(func):
-                return func
-            def wrapper(f):
-                return f
-            return wrapper
 
 # Patch gradio_client schema parsing bug for boolean additionalProperties
 try:
@@ -259,15 +250,10 @@ with gr.Blocks(theme=custom_theme, title="Sonic — Sub-200ms Multilingual Voice
                 """
             )
 
-# Override get_api_info to return safely and bypass schema crawler
-demo.get_api_info = lambda: {"named_endpoints": {}, "unnamed_endpoints": {}}
-
-# Mount Gradio onto root fastapi_app so /api/* and /ws/* routes take top priority
+# Mount Gradio onto root fastapi_app so /api/* routes take top priority
 app = gr.mount_gradio_app(fastapi_app, demo, path="/")
 
 if __name__ == "__main__":
-    # Pre-warm resources before starting web server
+    gpu_warmup()
     asyncio.run(initialize_resources())
-    
-    import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=7860)
