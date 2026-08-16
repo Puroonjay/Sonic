@@ -1,5 +1,5 @@
 ---
-title: Sonic Sub-200ms Multilingual Voice AI
+title: Sonic Multilingual Voice AI
 emoji: ⚡
 colorFrom: green
 colorTo: blue
@@ -10,13 +10,13 @@ pinned: false
 license: mit
 ---
 
-# Sonic: Sub-200ms Multilingual Voice AI Engine
+# Sonic: Multilingual Voice AI Engine
 
 **Developed by Team WeHustlers**
 
 ---
 
-Sonic is a low-latency, voice-enabled Retrieval-Augmented Generation (RAG) system built on the **MSMARCO-XI** Indic dataset. The pipeline accepts voice queries across 10+ Indian languages, transcribes them via Sarvam AI, retrieves relevant context using a multi-strategy LanceDB vector index, applies multi-tier guardrails, and generates concise, grounded answers with a median target latency of sub-200ms.
+Sonic is a low-latency, voice-enabled Retrieval-Augmented Generation (RAG) system built on the **MSMARCO-XI** Indic dataset. The pipeline accepts voice queries across 10+ Indian languages, transcribes them via Sarvam AI, retrieves relevant context using a multi-strategy LanceDB vector index, applies multi-tier guardrails, and generates concise, grounded answers with ultra-low latency.
 
 ```
 [Voice Input] -> [Sarvam AI STT] -> [LanceDB Multi-Strategy Index] -> [Multi-Tier Guardrails] -> [Groq LLaMA-3] -> [Next.js UI]
@@ -30,12 +30,12 @@ Tested across 30+ sequential queries using the automated test harness:
 
 | Metric | Measured Value | Target | Status |
 | :--- | :--- | :--- | :--- |
-| **P50 Latency (Median)** | **188.02 ms** | < 200 ms | **PASS** |
-| **P70 Latency** | **200.08 ms** | ~200 ms | **PASS** |
+| **P50 Latency (Median)** | **188.02 ms** | Real-Time | **PASS** |
+| **P70 Latency** | **200.08 ms** | Real-Time | **PASS** |
 | **P100 Latency (Worst-case)** | **374.26 ms** | Baseline | **PASS** |
 | **Vector Retrieval Time** | **~48.9 ms** | - | - |
 | **Guardrail Overhead** | **< 0.1 ms** | - | - |
-| **Sub-200ms Compliance** | **~83.3%** | - | - |
+| **Ultra-Low Latency SLA Compliance** | **~83.3%** | - | - |
 
 ---
 

@@ -40,9 +40,6 @@ export function ChatHeader({
         <div className="flex items-center gap-2 bg-zinc-900/90 border border-zinc-800 rounded-xl px-2.5 py-1 shadow-xs">
           <SonicLogo size={18} glow={false} animated={false} />
           <span className="font-bold text-zinc-200 text-xs">Sonic LLaMA-3.1</span>
-          <span className="text-[10px] text-emerald-400 font-mono hidden sm:inline">
-            (Sub-200ms)
-          </span>
         </div>
 
         <span className="text-zinc-700 hidden md:inline">|</span>

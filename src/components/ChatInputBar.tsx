@@ -24,7 +24,6 @@ interface ChatInputBarProps {
   onToggleRecording: () => void;
   onStartRecording?: () => void;
   onStopRecording?: () => void;
-  sampleQueries?: Array<{ label: string; text: string }>;
   selectedLanguage: string;
 }
 
@@ -146,10 +145,10 @@ export function ChatInputBar({
               onKeyDown={handleKeyDown}
               placeholder={
                 isRecording
-                  ? '🎙️ Listening... your spoken words will appear here in real time...'
+                  ? ' Listening... '
                   : isProcessing
-                  ? '⚡ Sonic is retrieving from MSMARCO-XI & synthesizing...'
-                  : 'Ask Sonic anything, or click the mic button to speak in 10+ Indic languages...'
+                  ? ' Sonic is thinking...'
+                  : 'Ask Sonic anything...'
               }
               disabled={isProcessing}
               className="w-full bg-transparent text-zinc-100 placeholder-zinc-500 text-sm md:text-base focus:outline-none resize-none max-h-32 font-sans py-1 leading-relaxed"
@@ -184,13 +183,13 @@ export function ChatInputBar({
                 )}
               </button>
 
-              <div className="hidden sm:flex items-center gap-1 text-[11px] text-zinc-500">
+              {/* <div className="hidden sm:flex items-center gap-1 text-[11px] text-zinc-500">
                 <span>Press</span>
                 <kbd className="px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400 border border-zinc-700 text-[10px]">
                   Enter ↵
                 </kbd>
                 <span>to send</span>
-              </div>
+              </div> */}
             </div>
 
             {/* Send Button */}

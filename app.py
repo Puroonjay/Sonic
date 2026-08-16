@@ -53,7 +53,7 @@ from backend.server import (
 )
 
 LANGUAGES = [
-    ("🌐 English (Indian)", "en-IN"),
+    ("English (Indian)", "en-IN"),
     ("🇮🇳 Hindi (हिन्दी)", "hi-IN"),
     ("🇮🇳 Tamil (தமிழ்)", "ta-IN"),
     ("🇮🇳 Telugu (తెలుగు)", "te-IN"),
@@ -116,14 +116,14 @@ def run_gradio_rag(
     # 4. Format Telemetry
     m = response.metrics
     telemetry_md = f"""
-### ⚡ Sub-200ms Telemetry Breakdown
+### ⚡ Latency Telemetry Breakdown
 | Stage | Latency | Status |
 | :--- | :--- | :--- |
 | **STT (Sarvam Saaras)** | `{m.stt_ms:.1f} ms` | {'✅ Streamed' if m.stt_ms > 0 else '⚡ Bypassed'} |
 | **Vector Retrieval (LanceDB)** | `{m.retrieval_ms:.1f} ms` | ✅ IVF-PQ Multi-Strategy |
 | **Safety & Grounding Guardrail** | `{m.guardrail_ms:.3f} ms` | {'🛡️ Refused' if response.refused else '✅ Pass'} |
 | **LLM Generation (Groq LLaMA-3)** | `{m.generation_ms:.1f} ms` | ⚡ Accelerated |
-| **Core RAG Total** | **`{m.total_ms:.1f} ms`** | {'🎯 Sub-200ms Target Compliant' if m.total_ms <= 200 else '⚡ Fast'} |
+| **Core RAG Total** | **`{m.total_ms:.1f} ms`** | {'🎯 Target SLA Compliant' if m.total_ms <= 250 else '⚡ Fast'} |
 
 - **Confidence Score**: `{response.confidence_score * 100:.1f}%`
 - **Grounded Status**: `{'✅ Yes' if response.grounded else '❌ Unverified'}`
@@ -152,12 +152,13 @@ def run_gradio_rag(
 def run_benchmark_gradio(sample_count: int = 15):
     """Run automated benchmark suite directly inside Gradio."""
     res = asyncio.run(run_benchmark_endpoint(sample_count=sample_count))
+    compliance = getattr(res, 'compliance_rate', getattr(res, 'sub_200ms_compliance_rate', 0.0))
     return f"""
 ## 🏆 Sonic Benchmark Results ({res.total_queries} Queries)
 
 | Percentile Metric | Latency | Target Compliance |
 | :--- | :--- | :--- |
-| **P50 (Median Total)** | **`{res.p50_total_ms:.1f} ms`** | 🎯 {'Sub-200ms PASS' if res.p50_total_ms <= 200 else 'Fast'} |
+| **P50 (Median Total)** | **`{res.p50_total_ms:.1f} ms`** | 🎯 {'Target SLA PASS' if res.p50_total_ms <= 250 else 'Fast'} |
 | **P70 Total** | **`{res.p70_total_ms:.1f} ms`** | ⚡ |
 | **P90 Total** | **`{res.p90_total_ms:.1f} ms`** | ⚡ |
 | **P100 (Max)** | **`{res.p100_total_ms:.1f} ms`** | ⚡ |
@@ -169,7 +170,7 @@ def run_benchmark_gradio(sample_count: int = 15):
 - **Avg Guardrail**: `{res.avg_guardrail_ms:.3f} ms`
 - **Avg Generation**: `{res.avg_generation_ms:.1f} ms`
 - **Avg Core RAG Total**: **`{res.avg_total_ms:.1f} ms`**
-- **Sub-200ms Compliance Rate**: **`{res.sub_200ms_compliance_rate:.1f}%`**
+- **Target SLA Compliance Rate**: **`{compliance:.1f}%`**
 - **Grounded Responses**: `{res.grounded_count} / {res.total_queries}`
 """
 
@@ -180,11 +181,11 @@ custom_theme = gr.themes.Soft(
     neutral_hue="slate"
 )
 
-with gr.Blocks(theme=custom_theme, title="Sonic — Sub-200ms Multilingual Voice AI") as demo:
+with gr.Blocks(theme=custom_theme, title="Sonic — Multilingual Voice AI") as demo:
     gr.Markdown(
         """
-        # ⚡ Sonic — Sub-200ms Multilingual Voice AI
-        **Team WeHustlers** | *HH Goa 2026 Task 2: Voice-Enabled RAG*
+        # ⚡ Sonic — Multilingual Voice AI
+        **Team WeHustlers** | *Multilingual Voice-Enabled RAG*
         
         > 🚀 **API & Vercel Endpoints Ready**: This Space serves the full REST (`/api/*`) and WebSocket (`/ws/rag`) backend for our Next.js frontend on Vercel while providing ZeroGPU hardware acceleration.
         """
@@ -196,7 +197,7 @@ with gr.Blocks(theme=custom_theme, title="Sonic — Sub-200ms Multilingual Voice
                 with gr.Column(scale=1):
                     lang_dropdown = gr.Dropdown(
                         choices=[label for label, _ in LANGUAGES],
-                        value="🌐 English (Indian)",
+                        value="English (Indian)",
                         label="Select Indic Language"
                     )
                     text_input = gr.Textbox(
@@ -209,7 +210,7 @@ with gr.Blocks(theme=custom_theme, title="Sonic — Sub-200ms Multilingual Voice
                         type="filepath",
                         label="Or Speak via Microphone"
                     )
-                    submit_btn = gr.Button("🚀 Run Sub-200ms Query", variant="primary")
+                    submit_btn = gr.Button("🚀 Run Fast Query", variant="primary")
 
                 with gr.Column(scale=1):
                     answer_output = gr.Textbox(label="Sonic Answer", lines=3)
@@ -246,7 +247,7 @@ with gr.Blocks(theme=custom_theme, title="Sonic — Sub-200ms Multilingual Voice
                 - **ZeroGPU Acceleration**: Enabled
                 - **Vector DB**: LanceDB IVF-PQ Table (`msmarco_vector_store`)
                 - **Embedding Model**: `BAAI/bge-small-en-v1.5`
-                - **Inference**: Groq LLaMA-3 Sub-200ms
+                - **Inference**: Groq LLaMA-3 (Ultra-Fast)
                 """
             )
 

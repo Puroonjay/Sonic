@@ -34,13 +34,15 @@ interface BenchmarkReport {
   avg_guardrail_ms: number;
   avg_generation_ms: number;
   avg_total_ms: number;
-  sub_200ms_compliance_rate: number;
+  compliance_rate?: number;
+  sub_200ms_compliance_rate?: number;
   query_details?: Array<{
     query: string;
     total_ms: number;
     retrieval_ms: number;
     generation_ms: number;
-    sub_200ms: boolean;
+    passed?: boolean;
+    sub_200ms?: boolean;
   }>;
 }
 
@@ -106,7 +108,7 @@ export function LatencyDashboard({
         <div className="flex items-center gap-2">
           <span className="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-1 rounded-full font-bold flex items-center gap-1">
             <Zap className="w-3 h-3 text-emerald-400 fill-emerald-400" />
-            TARGET: &lt; 200ms
+            TARGET: ULTRA-LOW LATENCY
           </span>
         </div>
       </div>
@@ -203,10 +205,10 @@ export function LatencyDashboard({
         <div className="bg-emerald-500/10 border border-emerald-500/20 p-3 rounded-xl flex items-center justify-between text-[11px] animate-in fade-in">
           <span className="flex items-center gap-1.5 text-emerald-400 font-semibold">
             <CheckCircle2 className="w-3.5 h-3.5" />
-            Sub-200ms Compliance:
+            Target SLA Compliance:
           </span>
           <span className="font-bold text-emerald-300">
-            {benchmarkResult.sub_200ms_compliance_rate}% ({benchmarkResult.total_queries} queries tested)
+            {benchmarkResult.compliance_rate ?? benchmarkResult.sub_200ms_compliance_rate}% ({benchmarkResult.total_queries} queries tested)
           </span>
         </div>
       )}

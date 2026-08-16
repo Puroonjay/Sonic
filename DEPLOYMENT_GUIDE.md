@@ -1,6 +1,6 @@
 # 🚀 Sonic Deployment Guide: Hugging Face Spaces (Gradio & ZeroGPU) + Vercel
 
-This guide provides end-to-end instructions for deploying **Sonic — Sub-200ms Multilingual Voice AI**:
+This guide provides end-to-end instructions for deploying **Sonic — Multilingual Voice AI**:
 - **Backend & Model Engine**: Hugging Face Spaces (**Gradio SDK with ZeroGPU / 16 GB RAM**)
 - **Frontend Web App**: Vercel (Next.js Edge CDN)
 - **Zero-Downtime Keep-Alive**: cron-job.org (Optional 24/7 uptime)
@@ -103,4 +103,4 @@ To prevent cold starts and guarantee instant responses during judging:
 - [ ] Open `https://<YOUR_HF_USERNAME>-sonic-backend.hf.space/api/health` in browser — should return `{"status": "healthy", "table_connected": true, ...}`
 - [ ] Open your Vercel deployment URL `https://sonic-*.vercel.app`
 - [ ] Test real-time Indic voice query via microphone
-- [ ] Observe sub-200ms latency metrics in the Speed Streak HUD!
+- [ ] Observe ultra-fast latency metrics in the Speed Streak HUD!

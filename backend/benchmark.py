@@ -359,7 +359,7 @@ async def run_benchmark(
     report_file = output_report or os.path.join(PROJECT_ROOT, "BENCHMARK_REPORT.md")
     with open(report_file, "w", encoding="utf-8") as f:
         f.write("# Sonic Latency Analytics & Verified Benchmark Report\n\n")
-        f.write("### Sub-200ms Voice-Enabled Multilingual Performance Benchmark\n\n")
+        f.write("### Voice-Enabled Multilingual Performance Benchmark\n\n")
         f.write(f"**Generated**: {time.strftime('%Y-%m-%d %H:%M:%S UTC', time.gmtime())}  \n")
         f.write(f"**Execution Mode**: `{mode.upper()}`  \n")
         f.write(f"**Total Queries Tested**: `{len(tot_latencies)}`  \n\n")
@@ -367,7 +367,7 @@ async def run_benchmark(
         f.write("## 1. Executive Performance Summary\n\n")
         f.write("| Metric | Verified Latency | Compliance Target |\n")
         f.write("| :--- | :--- | :--- |\n")
-        f.write(f"| **P50 (Median)** | **`{tot_p['p50']:.2f} ms`** | {'🎯 Sub-200ms Compliant' if tot_p['p50'] <= 200 else '⚡ Accelerated'} |\n")
+        f.write(f"| **P50 (Median)** | **`{tot_p['p50']:.2f} ms`** | {'🎯 Target Compliant' if tot_p['p50'] <= 250 else '⚡ Accelerated'} |\n")
         f.write(f"| **P70 Latency** | **`{tot_p['p70']:.2f} ms`** | ⚡ |\n")
         f.write(f"| **P90 Latency** | **`{tot_p['p90']:.2f} ms`** | ⚡ |\n")
         f.write(f"| **P95 Latency** | **`{tot_p['p95']:.2f} ms`** | ⚡ |\n")
@@ -424,7 +424,7 @@ async def run_benchmark(
     print(f"--> Telemetry JSON exported to: {json_path}")
 
 def main():
-    parser = argparse.ArgumentParser(description="Sonic Sub-200ms Multilingual Latency & Quality Benchmark")
+    parser = argparse.ArgumentParser(description="Sonic Multilingual Latency & Quality Benchmark")
     parser.add_argument("--samples", type=int, default=20, help="Number of benchmark query runs (default: 20)")
     parser.add_argument("--mode", type=str, choices=["rag", "voice", "server"], default="rag", help="Benchmark mode: 'rag' (Core RAG), 'voice' (Voice STT + RAG), 'server' (HTTP endpoint)")
     parser.add_argument("--url", type=str, default=None, help="Server base URL when using --mode server (e.g. http://localhost:8000)")

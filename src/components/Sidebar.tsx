@@ -72,7 +72,7 @@ export function Sidebar({
                       v2.0
                     </span>
                   </h1>
-                  <p className="text-[10px] text-zinc-500 font-mono">Sub-200ms Indic Voice AI</p>
+                  <p className="text-[10px] text-zinc-500 font-mono">Multilingual Indic Voice AI</p>
                 </div>
               </div>
 
@@ -150,7 +150,7 @@ export function Sidebar({
               <div className="max-h-56 overflow-y-auto space-y-1 pr-1">
                 {history.length === 0 ? (
                   <p className="text-[11px] font-mono text-zinc-600 px-2 py-3 italic">
-                    No past queries yet. Ask Sonic or hold mic!
+                    No past queries yet. Ask Sonic!
                   </p>
                 ) : (
                   history.slice(0, 8).map((item, idx) => (
@@ -177,30 +177,16 @@ export function Sidebar({
         <div className="p-3.5 border-t border-zinc-850/80 space-y-2.5 bg-zinc-950/60">
           {isOpen ? (
             <>
-              {/* Architecture badges */}
-              <div className="grid grid-cols-2 gap-1.5 text-[10px] font-mono">
-                <div className="p-2 rounded-lg bg-zinc-900/60 border border-zinc-800/60 text-zinc-400 flex items-center gap-1.5">
-                  <Database className="w-3 h-3 text-emerald-400 shrink-0" />
-                  <span className="truncate">MSMARCO-XI</span>
-                </div>
-                <div className="p-2 rounded-lg bg-zinc-900/60 border border-zinc-800/60 text-zinc-400 flex items-center gap-1.5">
-                  <Zap className="w-3 h-3 text-amber-400 shrink-0" />
-                  <span className="truncate">Groq LPUs</span>
-                </div>
-              </div>
-
               {/* Team Capsule */}
-              <div className="flex items-center justify-between pt-1 text-[11px] font-mono text-zinc-400">
+              <div className="flex items-center justify-between text-[11px] font-mono text-zinc-400">
                 <div className="flex items-center gap-2">
                   <div className="w-6 h-6 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 text-[10px] font-bold">
                     WH
                   </div>
                   <div>
                     <div className="text-zinc-200 font-bold text-[11px]">WeHustlers</div>
-                    
                   </div>
                 </div>
-                
               </div>
             </>
           ) : (

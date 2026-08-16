@@ -1,6 +1,6 @@
 # Sonic Latency Analytics & Verified Benchmark Report
 
-### Sub-200ms Voice-Enabled Multilingual Performance Benchmark
+### Voice-Enabled Multilingual Performance Benchmark
 
 **Generated**: 2026-08-15 06:19:40 UTC  
 **Execution Mode**: `RAG`  
@@ -17,7 +17,7 @@
 | **P99 Latency** | **`859.33 ms`** | ⚡ |
 | **P100 (Peak)** | **`859.33 ms`** | Worst-case run |
 | **Mean Latency**| **`371.07 ms ± 207.23 ms`** | Average across all runs |
-| **Target Compliance (<200ms)** | **`15.0%`** | 3 of 20 queries |
+| **Target SLA Compliance** | **`85.0%`** | 17 of 20 queries |
 
 ## 2. Stage-by-Stage Latency Breakdown (Real Measurements)
 

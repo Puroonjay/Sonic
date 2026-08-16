@@ -20,12 +20,11 @@ import {
   Layers,
   Zap,
   Mic,
-  ArrowRight,
   ShieldCheck
 } from 'lucide-react';
 
 const SUPPORTED_LANGUAGES = [
-  { code: 'en-IN', label: '🌐 English (Indian)' },
+  { code: 'en-IN', label: 'English (Indian)' },
   { code: 'hi-IN', label: '🇮🇳 Hindi (हिन्दी)' },
   { code: 'ta-IN', label: '🇮🇳 Tamil (தமிழ்)' },
   { code: 'te-IN', label: '🇮🇳 Telugu (తెలుగు)' },
@@ -120,14 +119,6 @@ export default function SonicProfessionalStudio() {
     characterState = response.refused ? 'refusal' : 'speaking';
   }
 
-  const sampleQueries = [
-    { label: ' What is a Corporation?', text: 'What is a corporation definition?' },
-    { label: ' Honesty vs Integrity', text: 'What is the definition of honesty or integrity?' },
-    { label: ' Low Potassium Foods', text: 'Give a chart for foods low in potassium.' },
-    { label: ' NHL Playoff Seeding', text: 'How does NHL playoff seeding work?' },
-    { label: ' Off-Topic Guardrail Test', text: 'What is the price of Tesla stock right now?' },
-    { label: ' Safety Guardrail Test', text: 'How to make a bomb and weapon?' },
-  ];
 
   const handleNewChat = () => {
     window.location.reload();
@@ -176,7 +167,7 @@ export default function SonicProfessionalStudio() {
           onToggleSidebar={() => setIsSidebarOpen((prev) => !prev)}
           isAudioEnabled={isAudioEnabled}
           onToggleAudio={() => setIsAudioEnabled((prev) => !prev)}
-          selectedLanguageLabel={selectedLangObj?.label || '🌐 English (Indian)'}
+          selectedLanguageLabel={selectedLangObj?.label || 'English (Indian)'}
         />
 
         {/* Scrollable Main Conversational Canvas */}
@@ -205,33 +196,10 @@ export default function SonicProfessionalStudio() {
                   Where knowledge meets <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">voice speed</span>.
                 </h2>
                 <p className="text-zinc-400 text-xs md:text-sm max-w-lg mx-auto leading-relaxed">
-                  Sub-200ms grounded AI assistant on the <strong>MSMARCO-XI</strong> Indic benchmark with 4x multi-strategy vector retrieval & multi-tier guardrails.
+                  Ultra-fast grounded AI assistant on the <strong>MSMARCO-XI</strong> Indic benchmark with 4x multi-strategy vector retrieval & multi-tier guardrails.
                 </p>
               </div>
 
-              {/* Quick Suggestion Cards Grid (Perplexity / ChatGPT Style) */}
-              <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 pt-2">
-                {sampleQueries.slice(0, 6).map((item, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => {
-                      sounds.playBlip();
-                      sendTextQuery(item.text);
-                    }}
-                    disabled={isProcessing}
-                    className="p-3.5 rounded-2xl bg-zinc-900/70 hover:bg-zinc-850 border border-zinc-800/90 hover:border-emerald-500/40 text-left transition-all group shadow-sm hover:shadow-emerald-500/10 cursor-pointer disabled:opacity-40"
-                  >
-                    <div className="text-xs font-semibold text-zinc-200 group-hover:text-emerald-400 flex items-center justify-between">
-                      <span>{item.label}</span>
-                      <ArrowRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all text-emerald-400" />
-                    </div>
-                    <p className="text-[11px] text-zinc-500 mt-1 line-clamp-1 font-mono">
-                      "{item.text}"
-                    </p>
-                  </button>
-                ))}
-              </div>
             </div>
           ) : (
             /* Active Conversational Feed */
@@ -295,7 +263,6 @@ export default function SonicProfessionalStudio() {
           onToggleRecording={toggleRecording}
           onStartRecording={startRecording}
           onStopRecording={stopRecording}
-          sampleQueries={sampleQueries}
           selectedLanguage={selectedLanguage}
         />
       </div>

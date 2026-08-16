@@ -103,7 +103,8 @@ class BenchmarkResult(BaseModel):
     avg_total_ms: float
     grounded_count: int
     refused_count: int
-    sub_200ms_compliance_rate: float
+    compliance_rate: float = 0.0
+    sub_200ms_compliance_rate: float = 0.0
     query_details: List[QueryDetailItem] = []
 
 # =====================================================================
@@ -185,8 +186,8 @@ async def lifespan(app: FastAPI):
         await http_client.aclose()
 
 app = FastAPI(
-    title="Sonic Sub-200ms Multilingual Voice AI Engine",
-    description="Sub-200ms Voice-Enabled Multilingual AI with Multi-Strategy Chunking & Multi-Tier Guardrails",
+    title="Sonic Multilingual Voice AI Engine",
+    description="Voice-Enabled Multilingual AI with Multi-Strategy Chunking & Multi-Tier Guardrails",
     version="2.0.0",
     lifespan=lifespan
 )
@@ -285,11 +286,11 @@ async def call_groq_llm_harness(prompt: str) -> str:
     raise RuntimeError(f"Groq API Error: {last_error}")
 
 # =====================================================================
-# CORE SUB-200MS RAG PIPELINE
+# CORE RAG PIPELINE
 # =====================================================================
 
 async def execute_rag_pipeline(transcript: str, stt_ms: float = 0.0) -> StructuredRAGResponse:
-    """Executes the full sub-200ms RAG pipeline with intelligent hybrid grounding & safety guardrails."""
+    """Executes the full RAG pipeline with intelligent hybrid grounding & safety guardrails."""
     start_total = time.perf_counter()
 
     # 1. Tier 1 Guardrail: Safety & Toxicity Filter
@@ -383,7 +384,7 @@ async def query_endpoint(req: QueryRequest):
 
 @app.post("/api/voice", response_model=StructuredRAGResponse)
 async def voice_endpoint(file: UploadFile = File(...), language_code: str = Form("en-IN")):
-    """Direct voice audio upload endpoint with Sarvam STT & sub-200ms RAG."""
+    """Direct voice audio upload endpoint with Sarvam STT & RAG pipeline."""
     audio_bytes = await file.read()
     if not audio_bytes:
         raise HTTPException(status_code=400, detail="Empty audio file.")
@@ -451,7 +452,7 @@ async def tts_endpoint(req: TTSRequest):
 
 @app.websocket("/ws/rag")
 async def websocket_rag_endpoint(websocket: WebSocket, language_code: str = "en-IN"):
-    """Real-time sub-200ms voice streaming WebSocket endpoint supporting 10+ Indic languages."""
+    """Real-time voice streaming WebSocket endpoint supporting 10+ Indic languages."""
     await websocket.accept()
     print(f"--> WebSocket Client Connected (Language: {language_code})")
 
@@ -578,6 +579,7 @@ async def run_benchmark_endpoint(sample_count: int = 25):
         avg_total_ms=avg_tot,
         grounded_count=grounded_count,
         refused_count=refused_count,
+        compliance_rate=compliance_rate,
         sub_200ms_compliance_rate=compliance_rate,
         query_details=[
             QueryDetailItem(
@@ -604,7 +606,7 @@ async def env_config():
 async def root_status():
     return {
         "status": "online",
-        "name": "Sonic Sub-200ms Multilingual Voice AI Engine",
+        "name": "Sonic Multilingual Voice AI Engine",
         "version": "2.0.0",
         "docs": "/docs",
         "health": "/api/health",
@@ -617,7 +619,7 @@ async def root_status():
 async def health_check():
     return {
         "status": "healthy",
-        "engine": "Sonic Sub-200ms",
+        "engine": "Sonic Multilingual",
         "dataset": "MSMARCO-XI",
         "table_connected": table is not None,
         "table_records": len(table) if table is not None else 0,

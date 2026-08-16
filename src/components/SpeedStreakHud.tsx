@@ -35,7 +35,8 @@ interface BenchmarkReport {
   avg_guardrail_ms: number;
   avg_generation_ms: number;
   avg_total_ms: number;
-  sub_200ms_compliance_rate: number;
+  compliance_rate?: number;
+  sub_200ms_compliance_rate?: number;
 }
 
 export function SpeedStreakHud({
@@ -199,10 +200,10 @@ export function SpeedStreakHud({
         <div className="bg-emerald-500/10 border border-emerald-500/30 p-3.5 rounded-2xl flex items-center justify-between text-xs animate-in fade-in">
           <span className="flex items-center gap-2 text-emerald-400 font-bold">
             <CheckCircle2 className="w-4 h-4" />
-            Sub-200ms Compliance:
+            Target SLA Compliance:
           </span>
           <span className="font-extrabold text-emerald-300 text-sm">
-            {benchmarkResult.sub_200ms_compliance_rate}% ({benchmarkResult.total_queries} queries)
+            {benchmarkResult.compliance_rate ?? benchmarkResult.sub_200ms_compliance_rate}% ({benchmarkResult.total_queries} queries)
           </span>
         </div>
       )}

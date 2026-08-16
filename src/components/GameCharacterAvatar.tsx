@@ -10,8 +10,6 @@ import {
   Heart,
   Music,
   Zap,
-  Dices,
-  PartyPopper,
   RefreshCw
 } from 'lucide-react';
 
@@ -746,60 +744,22 @@ export function GameCharacterAvatar({
         </div>
       </div>
 
-      {/* Interactive Quick-Action Toolbar below Sonic */}
-      {state === 'idle' && (
+      {/* Voice Action Button below Sonic */}
+      {state === 'idle' && onStartVoice && (
         <div className="flex items-center gap-1.5 mt-2 transition-all duration-300 z-20">
           <button
             type="button"
-            onClick={handleRandomQuery}
-            className="px-2.5 py-1 rounded-xl bg-zinc-900/90 hover:bg-emerald-500/20 border border-zinc-800 hover:border-emerald-500/40 text-zinc-400 hover:text-emerald-300 text-[11px] font-mono flex items-center gap-1.5 transition-all shadow-sm"
-            title="Ask Sonic a random question from the dataset"
-          >
-            <Dices className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Surprise Query</span>
-          </button>
-
-          <button
-            type="button"
             onClick={(e) => {
               e.stopPropagation();
-              triggerAction('dance');
+              sounds.playListenStart();
+              onStartVoice();
             }}
-            className="px-2.5 py-1 rounded-xl bg-zinc-900/90 hover:bg-purple-500/20 border border-zinc-800 hover:border-purple-500/40 text-zinc-400 hover:text-purple-300 text-[11px] font-mono flex items-center gap-1.5 transition-all shadow-sm"
-            title="Make Sonic dance!"
+            className="px-3 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 text-xs font-mono font-semibold flex items-center gap-1.5 transition-all shadow-sm cursor-pointer"
+            title="Start speaking"
           >
-            <PartyPopper className="w-3.5 h-3.5 text-purple-400" />
-            <span>Dance</span>
+            <Mic className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+            <span>Start Voice</span>
           </button>
-
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              triggerAction('spin');
-            }}
-            className="px-2.5 py-1 rounded-xl bg-zinc-900/90 hover:bg-cyan-500/20 border border-zinc-800 hover:border-cyan-500/40 text-zinc-400 hover:text-cyan-300 text-[11px] font-mono flex items-center gap-1.5 transition-all shadow-sm"
-            title="Sonic 360 Spin Dash!"
-          >
-            <RefreshCw className="w-3.5 h-3.5 text-cyan-400" />
-            <span>Spin</span>
-          </button>
-
-          {onStartVoice && (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                sounds.playListenStart();
-                onStartVoice();
-              }}
-              className="px-2.5 py-1 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 text-[11px] font-mono font-semibold flex items-center gap-1.5 transition-all shadow-sm"
-              title="Start speaking"
-            >
-              <Mic className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
-              <span>Voice</span>
-            </button>
-          )}
         </div>
       )}
 
