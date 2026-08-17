@@ -28,6 +28,7 @@ export interface RAGResponse {
   confidence_score?: number;
   citations?: RetrievedCitation[];
   metrics: LatencyMetrics;
+  model_used?: string;
 }
 
 export function useVoiceRAG(

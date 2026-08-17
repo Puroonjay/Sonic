@@ -16,7 +16,6 @@ import {
   Volume2,
   VolumeX,
   Layers,
-  RotateCcw,
   Zap,
   CheckCircle2,
   ExternalLink,
@@ -82,27 +81,6 @@ export function MessageItem({
     navigator.clipboard.writeText(response.answer);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
-  };
-
-  const handleReplay = () => {
-    sounds.playBlip();
-    const fullText = response.answer;
-    setDisplayedText('');
-    setIsTyping(true);
-    let charCount = 0;
-    const speedMs = 12;
-
-    const interval = setInterval(() => {
-      charCount++;
-      if (charCount <= fullText.length) {
-        setDisplayedText(fullText.slice(0, charCount));
-        if (charCount % 6 === 0) sounds.playTypeTick();
-      } else {
-        setDisplayedText(fullText);
-        setIsTyping(false);
-        clearInterval(interval);
-      }
-    }, speedMs);
   };
 
   const handleSpeakClick = () => {
@@ -235,16 +213,6 @@ export function MessageItem({
               >
                 {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                 <span className="text-[10px] hidden sm:inline">{copied ? 'Copied' : 'Copy'}</span>
-              </button>
-
-              {/* Replay Typewriter */}
-              <button
-                type="button"
-                onClick={handleReplay}
-                className="p-1.5 rounded-lg border border-zinc-800 bg-zinc-900 hover:bg-zinc-850 text-zinc-400 hover:text-zinc-200 text-xs transition-colors"
-                title="Replay Typewriter"
-              >
-                <RotateCcw className="w-3.5 h-3.5" />
               </button>
             </div>
           </div>

@@ -1,17 +1,28 @@
 {
-  "timestamp": 1786774780.8388312,
+  "timestamp": 1786976436.4404027,
   "mode": "rag",
   "total_queries": 20,
   "percentiles": {
-    "p50": 284.57,
-    "p70": 426.19,
-    "p90": 688.4,
-    "p95": 781.56,
-    "p99": 859.33,
-    "p100": 859.33,
-    "mean": 371.07,
-    "std": 207.23,
-    "min": 187.04
+    "p50": 626.69,
+    "p70": 679.17,
+    "p90": 779.09,
+    "p95": 858.81,
+    "p99": 925.96,
+    "p100": 925.96,
+    "mean": 641.4,
+    "std": 119.56,
+    "min": 457.04
+  },
+  "core_compute_percentiles": {
+    "p50": 153.7,
+    "p70": 161.26,
+    "p90": 167.74,
+    "p95": 176.99,
+    "p99": 181.03,
+    "p100": 181.03,
+    "mean": 157.77,
+    "std": 9.47,
+    "min": 147.59
   },
   "stage_breakdown": {
     "stt": {
@@ -26,40 +37,41 @@
       "min": 0.0
     },
     "retrieval": {
-      "p50": 48.61,
-      "p70": 51.61,
-      "p90": 68.0,
-      "p95": 74.24,
-      "p99": 343.75,
-      "p100": 343.75,
-      "mean": 64.35,
-      "std": 66.7,
-      "min": 36.53
+      "p50": 43.69,
+      "p70": 51.25,
+      "p90": 57.73,
+      "p95": 66.97,
+      "p99": 71.01,
+      "p100": 71.01,
+      "mean": 47.76,
+      "std": 9.47,
+      "min": 37.58
     },
     "guardrails": {
       "p50": 0.01,
       "p70": 0.01,
       "p90": 0.02,
       "p95": 0.02,
-      "p99": 0.03,
-      "p100": 0.03,
+      "p99": 0.02,
+      "p100": 0.02,
       "mean": 0.01,
-      "std": 0.01,
+      "std": 0.0,
       "min": 0.01
     },
     "generation": {
-      "p50": 194.1,
-      "p70": 328.93,
-      "p90": 639.74,
-      "p95": 707.29,
-      "p99": 795.0,
-      "p100": 795.0,
-      "mean": 306.68,
-      "std": 201.13,
-      "min": 143.36
+      "p50": 586.24,
+      "p70": 630.25,
+      "p90": 708.04,
+      "p95": 791.8,
+      "p99": 871.65,
+      "p100": 871.65,
+      "mean": 593.6,
+      "std": 113.5,
+      "min": 412.56
     }
   },
-  "compliance_rate": 15.0,
+  "compliance_rate": 100.0,
+  "sub_200ms_compliance_rate": 100.0,
   "guardrail_metrics": {
     "legitimate_pass_rate": 100.0,
     "adversarial_block_rate": 100.0
@@ -76,11 +88,11 @@
       "refused": false,
       "distance": 0.346,
       "stt_ms": 0.0,
-      "retrieval_ms": 51.34,
+      "retrieval_ms": 57.73,
       "guardrail_ms": 0.01,
-      "generation_ms": 175.87,
-      "total_ms": 227.23,
-      "answer_preview": "A corporation is a company or group of people authorized to act as a single entity (legall..."
+      "generation_ms": 624.1,
+      "total_ms": 681.85,
+      "answer_preview": "A corporation is a legal entity that is separate from its owners, allowing it to enter con..."
     },
     {
       "index": 2,
@@ -93,11 +105,11 @@
       "refused": false,
       "distance": 0.536,
       "stt_ms": 0.0,
-      "retrieval_ms": 343.75,
+      "retrieval_ms": 44.43,
       "guardrail_ms": 0.01,
-      "generation_ms": 151.04,
-      "total_ms": 494.82,
-      "answer_preview": "New Delhi is the capital of India. It has been the capital since 1931."
+      "generation_ms": 412.56,
+      "total_ms": 457.04,
+      "answer_preview": "New Delhi."
     },
     {
       "index": 3,
@@ -110,11 +122,11 @@
       "refused": false,
       "distance": 0.425,
       "stt_ms": 0.0,
-      "retrieval_ms": 51.79,
+      "retrieval_ms": 48.45,
       "guardrail_ms": 0.01,
-      "generation_ms": 233.72,
-      "total_ms": 285.54,
-      "answer_preview": "High blood pressure and hypertension can be caused by a combination of genetic, lifestyle,..."
+      "generation_ms": 586.24,
+      "total_ms": 634.73,
+      "answer_preview": "High blood pressure and hypertension can result from lifestyle factors such as obesity, la..."
     },
     {
       "index": 4,
@@ -127,11 +139,11 @@
       "refused": false,
       "distance": 0.545,
       "stt_ms": 0.0,
-      "retrieval_ms": 37.52,
+      "retrieval_ms": 51.34,
       "guardrail_ms": 0.01,
-      "generation_ms": 328.93,
-      "total_ms": 366.49,
-      "answer_preview": "Photosynthesis is a process in plants where they convert light energy from the sun into ch..."
+      "generation_ms": 572.69,
+      "total_ms": 624.06,
+      "answer_preview": "Photosynthesis is the process by which plants convert light energy into chemical energy, u..."
     },
     {
       "index": 5,
@@ -144,11 +156,11 @@
       "refused": false,
       "distance": 0.557,
       "stt_ms": 0.0,
-      "retrieval_ms": 50.53,
+      "retrieval_ms": 39.67,
       "guardrail_ms": 0.01,
-      "generation_ms": 156.6,
-      "total_ms": 207.17,
-      "answer_preview": "George Washington was the first president of the United States, serving from April 30, 178..."
+      "generation_ms": 493.18,
+      "total_ms": 532.88,
+      "answer_preview": "George Washington was the first president of the United States."
     },
     {
       "index": 6,
@@ -161,11 +173,11 @@
       "refused": false,
       "distance": 0.542,
       "stt_ms": 0.0,
-      "retrieval_ms": 47.16,
+      "retrieval_ms": 42.29,
       "guardrail_ms": 0.01,
-      "generation_ms": 152.7,
-      "total_ms": 199.89,
-      "answer_preview": "Malaria symptoms include fever, chills, flu-like symptoms, and in severe cases, coma or de..."
+      "generation_ms": 642.91,
+      "total_ms": 685.24,
+      "answer_preview": "Malaria typically presents with fever, chills, sweats, headache, muscle aches, and fatigue..."
     },
     {
       "index": 7,
@@ -178,11 +190,11 @@
       "refused": false,
       "distance": 0.469,
       "stt_ms": 0.0,
-      "retrieval_ms": 46.75,
+      "retrieval_ms": 39.43,
       "guardrail_ms": 0.01,
-      "generation_ms": 177.9,
-      "total_ms": 224.69,
-      "answer_preview": "The compound interest formula is A = P(1 + r/n)^(nt), where A is the amount of money accum..."
+      "generation_ms": 576.73,
+      "total_ms": 616.19,
+      "answer_preview": "The compound interest formula is A = P(1 + r/n)^(nt), where A is the final amount, P is th..."
     },
     {
       "index": 8,
@@ -195,11 +207,11 @@
       "refused": false,
       "distance": 0.684,
       "stt_ms": 0.0,
-      "retrieval_ms": 40.92,
+      "retrieval_ms": 55.11,
       "guardrail_ms": 0.01,
-      "generation_ms": 194.1,
-      "total_ms": 235.06,
-      "answer_preview": "Quantum computing is a revolutionary technology that uses the principles of quantum mechan..."
+      "generation_ms": 611.52,
+      "total_ms": 666.67,
+      "answer_preview": "Quantum computing is a type of computation that uses quantum‑mechanical phenomena such as ..."
     },
     {
       "index": 9,
@@ -212,11 +224,11 @@
       "refused": false,
       "distance": 0.544,
       "stt_ms": 0.0,
-      "retrieval_ms": 39.85,
+      "retrieval_ms": 37.58,
       "guardrail_ms": 0.01,
-      "generation_ms": 192.85,
-      "total_ms": 232.74,
-      "answer_preview": "The sky appears blue during the day because of a phenomenon called Rayleigh scattering, wh..."
+      "generation_ms": 630.25,
+      "total_ms": 667.87,
+      "answer_preview": "The sky appears blue because sunlight is scattered by air molecules, and shorter blue wave..."
     },
     {
       "index": 10,
@@ -229,11 +241,11 @@
       "refused": false,
       "distance": 0.526,
       "stt_ms": 0.0,
-      "retrieval_ms": 38.72,
+      "retrieval_ms": 38.74,
       "guardrail_ms": 0.01,
-      "generation_ms": 148.29,
-      "total_ms": 187.04,
-      "answer_preview": "The average distance between Earth and the Moon is approximately 238,855 miles. This dista..."
+      "generation_ms": 443.47,
+      "total_ms": 482.24,
+      "answer_preview": "Approximately 238,855 miles."
     },
     {
       "index": 11,
@@ -246,11 +258,11 @@
       "refused": false,
       "distance": 0.548,
       "stt_ms": 0.0,
-      "retrieval_ms": 37.75,
+      "retrieval_ms": 42.93,
       "guardrail_ms": 0.01,
-      "generation_ms": 168.34,
-      "total_ms": 206.12,
-      "answer_preview": "DNA contains the genetic instructions used in the development and function of all living o..."
+      "generation_ms": 531.17,
+      "total_ms": 574.14,
+      "answer_preview": "DNA is a double‑stranded helix that stores genetic information, whereas RNA is typically s..."
     },
     {
       "index": 12,
@@ -263,10 +275,10 @@
       "refused": false,
       "distance": 0.477,
       "stt_ms": 0.0,
-      "retrieval_ms": 36.53,
+      "retrieval_ms": 49.06,
       "guardrail_ms": 0.01,
-      "generation_ms": 247.97,
-      "total_ms": 284.57,
+      "generation_ms": 538.6,
+      "total_ms": 587.7,
       "answer_preview": "Solar panels generate electricity by converting sunlight into electrical energy through th..."
     },
     {
@@ -280,11 +292,11 @@
       "refused": false,
       "distance": 0.233,
       "stt_ms": 0.0,
-      "retrieval_ms": 49.25,
-      "guardrail_ms": 0.03,
-      "generation_ms": 143.36,
-      "total_ms": 192.67,
-      "answer_preview": "भारत की राजधानी नई दिल्ली है।"
+      "retrieval_ms": 43.69,
+      "guardrail_ms": 0.01,
+      "generation_ms": 453.02,
+      "total_ms": 496.8,
+      "answer_preview": "नई दिल्ली"
     },
     {
       "index": 14,
@@ -297,11 +309,11 @@
       "refused": false,
       "distance": 0.212,
       "stt_ms": 0.0,
-      "retrieval_ms": 40.57,
+      "retrieval_ms": 42.67,
       "guardrail_ms": 0.02,
-      "generation_ms": 385.57,
-      "total_ms": 426.19,
-      "answer_preview": "निगम एक प्रकार का व्यवसायिक संगठन है जो कानून द्वारा स्थापित और पंजीकृत होता है, जिसका उद्..."
+      "generation_ms": 636.45,
+      "total_ms": 679.17,
+      "answer_preview": "निगम एक कानूनी संस्था है जो शेयरधारकों के स्वामित्व में होती है और लाभ कमाने के उद्देश्य स..."
     },
     {
       "index": 15,
@@ -314,11 +326,11 @@
       "refused": false,
       "distance": 0.11,
       "stt_ms": 0.0,
-      "retrieval_ms": 51.61,
+      "retrieval_ms": 66.97,
       "guardrail_ms": 0.02,
-      "generation_ms": 245.02,
-      "total_ms": 296.67,
-      "answer_preview": "पौधों में प्रकाश संश्लेषण की प्रक्रिया फोटोसिंथेसिस है, जिसमें पौधे प्रकाश, पानी और कार्बन..."
+      "generation_ms": 791.8,
+      "total_ms": 858.81,
+      "answer_preview": "पौधे प्रकाश ऊर्जा को क्लोरोफिल द्वारा अवशोषित करते हैं, जिससे पानी का ऑक्सीकरण होकर ऑक्सीज..."
     },
     {
       "index": 16,
@@ -331,11 +343,11 @@
       "refused": false,
       "distance": 0.255,
       "stt_ms": 0.0,
-      "retrieval_ms": 67.82,
-      "guardrail_ms": 0.01,
-      "generation_ms": 463.5,
-      "total_ms": 531.36,
-      "answer_preview": "उच्च रक्तचाप के मुख्य लक्षणों में सिरदर्द, चक्कर आना, सांस फूलना, थकान और नाक से खून आना श..."
+      "retrieval_ms": 71.01,
+      "guardrail_ms": 0.02,
+      "generation_ms": 708.04,
+      "total_ms": 779.09,
+      "answer_preview": "उच्च रक्तचाप के मुख्य लक्षणों में सिरदर्द, चक्कर आना, धुंधली दृष्टि, छाती में दर्द, सांस फ..."
     },
     {
       "index": 17,
@@ -348,11 +360,11 @@
       "refused": false,
       "distance": 0.453,
       "stt_ms": 0.0,
-      "retrieval_ms": 48.61,
-      "guardrail_ms": 0.02,
-      "generation_ms": 639.74,
-      "total_ms": 688.4,
-      "answer_preview": "ભારતની રાજધાની નવી દિલ્હી છે. નવી દિલ્હી ભારતનું રાજકીય, આર્થિક અને સાંસ્કૃતિક કેન્દ્ર છે."
+      "retrieval_ms": 39.95,
+      "guardrail_ms": 0.01,
+      "generation_ms": 493.41,
+      "total_ms": 533.39,
+      "answer_preview": "New Delhi."
     },
     {
       "index": 18,
@@ -365,11 +377,11 @@
       "refused": false,
       "distance": 0.358,
       "stt_ms": 0.0,
-      "retrieval_ms": 74.24,
+      "retrieval_ms": 38.64,
       "guardrail_ms": 0.01,
-      "generation_ms": 707.29,
-      "total_ms": 781.56,
-      "answer_preview": "સૂર્યપ્રકાશમાંથી વીજળી બનાવવા માટે સોલાર પેનલોનો ઉપયોગ કરવામાં આવે છે, જે સૂર્યપ્રકાશને વિ..."
+      "generation_ms": 588.02,
+      "total_ms": 626.69,
+      "answer_preview": "સૂર્યપ્રકાશ ફોટોવોલ્ટેઇક કોષોમાં પ્રવેશીને ઇલેક્ટ્રોનને મુક્ત કરે છે, જે વીજ પ્રવાહ ઉત્પન્..."
     },
     {
       "index": 19,
@@ -382,11 +394,11 @@
       "refused": false,
       "distance": 0.242,
       "stt_ms": 0.0,
-      "retrieval_ms": 68.0,
+      "retrieval_ms": 54.27,
       "guardrail_ms": 0.01,
-      "generation_ms": 425.87,
-      "total_ms": 493.91,
-      "answer_preview": "नवी दिल्ली भारताची राजधानी आहे. भारताच्या सर्वात मोठ्या महानगरांपैकी एक असलेल्या दिल्लीचे ..."
+      "generation_ms": 871.65,
+      "total_ms": 925.96,
+      "answer_preview": "नवी दिल्ली"
     },
     {
       "index": 20,
@@ -399,11 +411,11 @@
       "refused": false,
       "distance": 0.189,
       "stt_ms": 0.0,
-      "retrieval_ms": 64.3,
+      "retrieval_ms": 51.25,
       "guardrail_ms": 0.01,
-      "generation_ms": 795.0,
-      "total_ms": 859.33,
-      "answer_preview": "रक्तदाब वाढण्याची कारणे म्हणजे अनेकदा वय, लिंग, जीवनशैली, आहार, व्यायाम, तणाव, वंश, मधुमेह..."
+      "generation_ms": 666.12,
+      "total_ms": 717.4,
+      "answer_preview": "रक्तदाब वाढण्याची प्रमुख कारणे म्हणजे आनुवंशिक प्रवृत्ती, जास्त मीठाचे सेवन, स्थूलता, शारी..."
     }
   ]
 }

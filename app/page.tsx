@@ -168,6 +168,7 @@ export default function SonicProfessionalStudio() {
           isAudioEnabled={isAudioEnabled}
           onToggleAudio={() => setIsAudioEnabled((prev) => !prev)}
           selectedLanguageLabel={selectedLangObj?.label || 'English (Indian)'}
+          activeModel={response?.model_used || 'openai/gpt-oss-20b'}
         />
 
         {/* Scrollable Main Conversational Canvas */}

@@ -122,9 +122,10 @@ def run_gradio_rag(
 | **STT (Sarvam Saaras)** | `{m.stt_ms:.1f} ms` | {'✅ Streamed' if m.stt_ms > 0 else '⚡ Bypassed'} |
 | **Vector Retrieval (LanceDB)** | `{m.retrieval_ms:.1f} ms` | ✅ IVF-PQ Multi-Strategy |
 | **Safety & Grounding Guardrail** | `{m.guardrail_ms:.3f} ms` | {'🛡️ Refused' if response.refused else '✅ Pass'} |
-| **LLM Generation (Groq LLaMA-3)** | `{m.generation_ms:.1f} ms` | ⚡ Accelerated |
+| **LLM Generation (Groq LPU)** | `{m.generation_ms:.1f} ms` | ⚡ Accelerated ({getattr(response, 'model_used', 'Groq')}) |
 | **Core RAG Total** | **`{m.total_ms:.1f} ms`** | {'🎯 Target SLA Compliant' if m.total_ms <= 250 else '⚡ Fast'} |
 
+- **Model Used**: `{getattr(response, 'model_used', 'Groq LPU')}`
 - **Confidence Score**: `{response.confidence_score * 100:.1f}%`
 - **Grounded Status**: `{'✅ Yes' if response.grounded else '❌ Unverified'}`
 """
@@ -247,7 +248,7 @@ with gr.Blocks(theme=custom_theme, title="Sonic — Multilingual Voice AI") as d
                 - **ZeroGPU Acceleration**: Enabled
                 - **Vector DB**: LanceDB IVF-PQ Table (`msmarco_vector_store`)
                 - **Embedding Model**: `BAAI/bge-small-en-v1.5`
-                - **Inference**: Groq LLaMA-3 (Ultra-Fast)
+                - **Inference**: Groq LPU (Ultra-Fast)
                 """
             )
 

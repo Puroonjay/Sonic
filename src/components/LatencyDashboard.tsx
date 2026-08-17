@@ -282,7 +282,7 @@ export function LatencyDashboard({
             <div className="flex justify-between items-center bg-zinc-950/70 px-3 py-2 rounded-lg border border-zinc-850">
               <span className="text-zinc-400 flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-amber-400" />
-                4. LLM Generation (Groq LLaMA-3):
+                4. LLM Generation (Groq LPU):
               </span>
               <span className="font-bold text-amber-300">{currentMetrics.generation_ms} ms</span>
             </div>
